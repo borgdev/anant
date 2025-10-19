@@ -11,7 +11,7 @@ requires-python = ">=3.9"
 license = {file = "LICENSE"}
 keywords = ["hypergraph", "network", "analysis", "polars", "analytics", "data-science"]
 authors = [
-    {name = "Anant Development Team", email = "dev@anant.ai"},
+    {name = "borgdev", email = "amiya.mansingh@gmail.com"},
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -67,13 +67,19 @@ viz = [
     "plotly>=5.0.0",
     "bokeh>=3.0.0",
 ]
-all = ["anant[dev,docs,benchmark,viz]"]
+gpu = [
+    "torch>=2.0.0",  # PyTorch for GPU operations
+    "cupy-cuda12x>=12.0.0",  # CuPy for CUDA operations
+    "nvidia-ml-py>=12.0.0",  # GPU monitoring
+    "pynvml>=11.0.0",  # NVIDIA GPU monitoring
+]
+all = ["anant[dev,docs,benchmark,viz,gpu]"]
 
 [project.urls]
-Documentation = "https://anant.readthedocs.io"
-Repository = "https://github.com/anant-ai/anant"
-"Bug Tracker" = "https://github.com/anant-ai/anant/issues"
-Changelog = "https://github.com/anant-ai/anant/blob/main/CHANGELOG.md"
+Documentation = "https://borgdev.github.io/anant"
+Repository = "https://github.com/borgdev/anant"
+"Bug Tracker" = "https://github.com/borgdev/anant/issues"
+Changelog = "https://github.com/borgdev/anant/blob/main/CHANGELOG.md"
 
 [tool.hatch.version]
 path = "anant/__init__.py"
