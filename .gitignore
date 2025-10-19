@@ -262,6 +262,10 @@ config/secrets.json
 *.json.gz
 *.jsonl
 *.ndjson
+*.zip
+*.tar.gz
+*.rar
+*.7z
 
 # Cache directories
 .cache/
