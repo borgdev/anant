@@ -73,7 +73,13 @@ gpu = [
     "nvidia-ml-py>=12.0.0",  # GPU monitoring
     "pynvml>=11.0.0",  # NVIDIA GPU monitoring
 ]
-all = ["anant[dev,docs,benchmark,viz,gpu]"]
+caching = [
+    "redis>=4.0.0",  # Redis for distributed caching
+    "diskcache>=5.6.0",  # Local disk caching
+    "xxhash>=3.0.0",  # Fast hashing for cache keys
+    "msgpack>=1.0.0",  # Efficient serialization
+]
+all = ["anant[dev,docs,benchmark,viz,gpu,caching]"]
 
 [project.urls]
 Documentation = "https://borgdev.github.io/anant"
