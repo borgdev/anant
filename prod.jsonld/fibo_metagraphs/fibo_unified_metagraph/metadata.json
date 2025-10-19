@@ -1,0 +1,16 @@
+{
+  "anant_version": "0.1.0",
+  "saved_at": "2025-10-18T20:47:42.707231",
+  "hypergraph_name": "Hypergraph",
+  "compression": "snappy",
+  "statistics": {
+    "num_edges": 128445,
+    "num_nodes": 50019,
+    "num_incidences": 385335
+  },
+  "files": {
+    "incidences": "incidences.parquet",
+    "edge_properties": null,
+    "node_properties": null
+  }
+}

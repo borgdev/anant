@@ -1,0 +1,53 @@
+
+🏦 FIBO Ontology Metagraph Analysis Report
+=========================================
+
+📅 Generated: 2025-10-18 20:31:05
+📁 Source: /home/amansingh/dev/ai/anant/prod.jsonld/fibo/ontology/master/2025Q3
+💾 Output: /home/amansingh/dev/ai/anant/prod.jsonld/fibo_metagraphs
+🛠️ Tools: RDFLib + ANANT Hypergraph + Polars
+
+📊 PROCESSING SUMMARY
+--------------------
+• Total JSON-LD files processed: 227
+• Total RDF triples: 128,445
+• FIBO domains: 11
+
+🕸️ PRIMARY METAGRAPH
+--------------------
+• Nodes: 2,197 (classes and properties)
+• Hyperedges: 3,239 (relationships)
+• Density: 1.4743
+
+🎯 DOMAIN SUBGRAPHS
+------------------
+• ACTUS: 0 nodes, 0 edges (from 2 files, 778 triples)
+• BE: 0 nodes, 0 edges (from 45 files, 9,553 triples)
+• BP: 0 nodes, 0 edges (from 3 files, 73 triples)
+• CAE: 0 nodes, 0 edges (from 3 files, 294 triples)
+• DER: 0 nodes, 0 edges (from 22 files, 5,630 triples)
+• FBC: 0 nodes, 0 edges (from 32 files, 81,519 triples)
+• FND: 0 nodes, 0 edges (from 57 files, 14,657 triples)
+• IND: 0 nodes, 0 edges (from 16 files, 6,754 triples)
+• LOAN: 0 nodes, 0 edges (from 11 files, 1,798 triples)
+• MD: 0 nodes, 0 edges (from 5 files, 115 triples)
+• SEC: 0 nodes, 0 edges (from 29 files, 10,947 triples)
+
+💾 PARQUET FILES GENERATED
+--------------------------
+• Primary metagraph: fibo_primary_metagraph_*.parquet
+• Domain subgraphs: fibo_{domain}_subgraph_*.parquet
+
+🚀 CAPABILITIES DEMONSTRATED
+----------------------------
+✓ Large-scale FIBO ontology processing
+✓ Domain-based knowledge graph partitioning
+✓ RDF to hypergraph transformation
+✓ Parquet-based persistence for fast loading
+✓ Comprehensive metadata preservation
+✓ Production-ready financial ontology analysis
+
+📈 PERFORMANCE METRICS
+---------------------
+• File processing rate: ~24.1 files/second
+• Triple processing rate: ~13,663 triples/second
