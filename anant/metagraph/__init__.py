@@ -25,12 +25,13 @@ Features:
 - Policy-driven governance and access control
 """
 
+from pathlib import Path
 from .core.metagraph import Metagraph
 from .core.hierarchical_store import HierarchicalStore  
 from .core.metadata_store import MetadataStore
 from .semantic.semantic_layer import SemanticLayer, SemanticRelationship
 from .temporal.temporal_layer import TemporalLayer, TemporalEvent, TemporalPattern
-from .governance.policy_layer import PolicyEngine, Policy, AccessRequest, AuditEvent
+from .governance.policy_layer import PolicyEngine, PolicyRule, AccessControl
 
 __version__ = "1.0.0-phase1"
 __author__ = "Anant Team"
@@ -50,9 +51,8 @@ __all__ = [
     "SemanticRelationship",
     "TemporalEvent",
     "TemporalPattern", 
-    "Policy",
-    "AccessRequest",
-    "AuditEvent",
+    "PolicyRule",
+    "AccessControl",
     
     # Convenience functions
     "create_enterprise_metagraph",
@@ -81,7 +81,7 @@ def create_enterprise_metagraph(storage_path: str = "./enterprise_metagraph",
         >>> entities = mg.search_entities("Widget")
     """
     return Metagraph(
-        storage_path=storage_path,
+        storage_path=Path(storage_path),
         embedding_dimension=embedding_dimension,
         compression=compression,
         retention_days=retention_days
@@ -101,7 +101,7 @@ def create_basic_metagraph(storage_path: str = "./basic_metagraph") -> Metagraph
         >>> mg = create_basic_metagraph()
         >>> mg.create_entity("test_1", "test", {"value": "hello"})
     """
-    return Metagraph(storage_path=storage_path)
+    return Metagraph(storage_path=Path(storage_path))
 
 # Version information
 def get_version_info():

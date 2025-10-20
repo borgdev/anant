@@ -2,8 +2,18 @@
 Streaming Data Processing for Hypergraphs
 
 This module provides comprehensive streaming capabilities for hypergraph processing,
-leveraging the Performance Optimization Engine for efficient real-time analysis.
-Supports incremental updates, streaming analytics, and memory-efficient operations.
+including:
+
+Core Components:
+- StreamingFramework: Production-grade real-time streaming with WebSocket support
+- GraphStreamProcessor: Event-driven stream processing with multiple backends
+- TemporalGraph: Time-aware graph storage with versioning and snapshots
+- EventStore: Persistent event sourcing with SQLite/PostgreSQL backends
+
+Legacy Components (maintained for compatibility):
+- StreamingHypergraph: Basic streaming hypergraph implementation
+- StreamingAnalytics: Real-time analytics engine
+- IncrementalCentralityProcessor: Incremental centrality computation
 """
 
 import polars as pl
@@ -17,10 +27,58 @@ from datetime import datetime
 from abc import ABC, abstractmethod
 
 from ..classes.hypergraph import Hypergraph
-from ..optimization import PerformanceOptimizer, MemoryMonitor
-from ..analysis.centrality import degree_centrality, s_centrality
-from ..analysis.clustering import modularity_clustering
-from ..analysis.temporal import TemporalSnapshot, TemporalHypergraph
+
+# Core streaming framework imports
+from .integration import (
+    StreamingFramework, StreamingConfig, StreamingMode, StreamingStats,
+    create_streaming_framework, create_real_time_streaming, create_batch_streaming
+)
+from .core.stream_processor import (
+    GraphStreamProcessor, GraphEvent, EventType, ConflictResolution,
+    StreamConfig, StreamMetrics
+)
+from .core.temporal_graph import (
+    TemporalGraph, TemporalScope, TimeRange, GraphSnapshot, VersioningStrategy,
+    create_temporal_graph
+)
+from .core.event_store import (
+    EventStore, EventQuery, EventBatch, Snapshot, StorageBackend,
+    create_memory_store, create_sqlite_store, create_event_store
+)
+
+# Legacy imports (for backward compatibility)
+try:
+    from ..optimization import PerformanceOptimizer, MemoryMonitor, OptimizationConfig
+    OPTIMIZATION_AVAILABLE = True
+except ImportError:
+    PerformanceOptimizer = None
+    MemoryMonitor = None
+    OptimizationConfig = None
+    OPTIMIZATION_AVAILABLE = False
+
+try:
+    from ..analysis.centrality import degree_centrality, s_centrality
+    CENTRALITY_AVAILABLE = True
+except ImportError:
+    degree_centrality = None
+    s_centrality = None
+    CENTRALITY_AVAILABLE = False
+
+try:
+    from ..analysis.clustering import modularity_clustering, community_quality_metrics
+    CLUSTERING_AVAILABLE = True
+except ImportError:
+    modularity_clustering = None
+    community_quality_metrics = None
+    CLUSTERING_AVAILABLE = False
+
+try:
+    from ..analysis.temporal import TemporalSnapshot, TemporalHypergraph
+    TEMPORAL_ANALYSIS_AVAILABLE = True
+except ImportError:
+    TemporalSnapshot = None
+    TemporalHypergraph = None
+    TEMPORAL_ANALYSIS_AVAILABLE = False
 
 
 @dataclass
@@ -89,13 +147,22 @@ class IncrementalCentralityProcessor(StreamProcessor):
     
     def _recompute_centralities(self, hg: Hypergraph):
         """Recompute all centrality measures"""
-        if 'degree' in self.measures:
-            degree_cents = degree_centrality(hg, normalized=True)
-            self.centrality_scores['degree'] = degree_cents['nodes']
+        if not CENTRALITY_AVAILABLE:
+            return
         
-        if 's_centrality' in self.measures:
-            s_cents = s_centrality(hg, s=1, normalized=True)
-            self.centrality_scores['s_centrality'] = s_cents
+        if 'degree' in self.measures and degree_centrality is not None:
+            try:
+                degree_cents = degree_centrality(hg, normalized=True)
+                self.centrality_scores['degree'] = degree_cents['nodes']
+            except Exception:
+                pass
+        
+        if 's_centrality' in self.measures and s_centrality is not None:
+            try:
+                s_cents = s_centrality(hg, s=1, normalized=True)
+                self.centrality_scores['s_centrality'] = s_cents
+            except Exception:
+                pass
     
     def get_results(self) -> Dict[str, Any]:
         """Get current centrality results"""
@@ -142,13 +209,16 @@ class StreamingClusteringProcessor(StreamProcessor):
     
     def _recompute_communities(self, hg: Hypergraph):
         """Recompute community structure"""
+        if not CLUSTERING_AVAILABLE or modularity_clustering is None:
+            return
+        
         try:
             self.communities = modularity_clustering(hg)
             
             # Calculate current modularity
-            from ..analysis.clustering import community_quality_metrics
-            quality = community_quality_metrics(hg, self.communities)
-            self.last_modularity = quality['modularity']
+            if community_quality_metrics is not None:
+                quality = community_quality_metrics(hg, self.communities)
+                self.last_modularity = quality['modularity']
             
         except Exception:
             # Keep previous communities if computation fails
@@ -182,13 +252,12 @@ class StreamingHypergraph:
             enable_optimization: Whether to use performance optimization
             buffer_size: Size of update buffer
         """
-        self.hypergraph = initial_hg or Hypergraph(pl.DataFrame({"edges": [], "nodes": []}))
+        self.hypergraph = initial_hg or Hypergraph(data=pl.DataFrame({"edges": [], "nodes": [], "weight": []}))
         self.update_buffer = Queue(maxsize=buffer_size)
         self.processors = []
         
         # Performance optimization
-        if enable_optimization:
-            from ..optimization import OptimizationConfig
+        if enable_optimization and OPTIMIZATION_AVAILABLE and OptimizationConfig is not None:
             config = OptimizationConfig()
             self.optimizer = PerformanceOptimizer(config)
             self.memory_monitor = MemoryMonitor()
@@ -294,8 +363,8 @@ class StreamingHypergraph:
             current_time = datetime.now()
             
             # Ensure proper data types match existing data and add created_at column
-            existing_edges_dtype = self.hypergraph._incidence_store.data["edges"].dtype
-            existing_nodes_dtype = self.hypergraph._incidence_store.data["nodes"].dtype
+            existing_edges_dtype = self.hypergraph.incidences.data["edges"].dtype
+            existing_nodes_dtype = self.hypergraph.incidences.data["nodes"].dtype
             
             # Handle categorical types properly by first converting to string, then casting
             if existing_edges_dtype == pl.Categorical:
@@ -307,7 +376,7 @@ class StreamingHypergraph:
                     pl.lit(current_time).alias("created_at")
                 ])
                 # Convert existing data to string temporarily for concatenation
-                existing_df = self.hypergraph._incidence_store.data.with_columns([
+                existing_df = self.hypergraph.incidences.data.with_columns([
                     pl.col("edges").cast(pl.Utf8),
                     pl.col("nodes").cast(pl.Utf8)
                 ])
@@ -325,10 +394,10 @@ class StreamingHypergraph:
                     pl.col("weight").cast(pl.Float64),
                     pl.lit(current_time).alias("created_at")
                 ])
-                combined_df = pl.concat([self.hypergraph._incidence_store.data, new_df])
+                combined_df = pl.concat([self.hypergraph.incidences.data, new_df])
             
             # Update hypergraph
-            self.hypergraph = Hypergraph(combined_df)
+            self.hypergraph = Hypergraph(data=combined_df)
     
     def _remove_edge_from_update(self, update: StreamingUpdate):
         """Remove edge from streaming update"""
@@ -336,12 +405,12 @@ class StreamingHypergraph:
         
         if edge_id:
             # Filter out the edge
-            filtered_df = self.hypergraph._incidence_store.data.filter(
+            filtered_df = self.hypergraph.incidences.data.filter(
                 pl.col("edges") != edge_id
             )
             
             # Update hypergraph
-            self.hypergraph = Hypergraph(filtered_df)
+            self.hypergraph = Hypergraph(data=filtered_df)
     
     def _modify_edge_from_update(self, update: StreamingUpdate):
         """Modify edge from streaming update"""
@@ -492,7 +561,7 @@ class StreamingAnalytics:
     
     def _compute_centrality_stats(self, hg: Hypergraph) -> Dict[str, float]:
         """Compute centrality statistics"""
-        if hg.num_nodes == 0:
+        if hg.num_nodes == 0 or not CENTRALITY_AVAILABLE or degree_centrality is None:
             return {'max_degree': 0.0, 'avg_degree': 0.0, 'degree_std': 0.0}
         
         try:
@@ -509,18 +578,22 @@ class StreamingAnalytics:
     
     def _compute_community_stats(self, hg: Hypergraph) -> Dict[str, float]:
         """Compute community structure statistics"""
-        if hg.num_nodes < 2:
+        if hg.num_nodes < 2 or not CLUSTERING_AVAILABLE or modularity_clustering is None:
             return {'num_communities': 0.0, 'modularity': 0.0}
         
         try:
             communities = modularity_clustering(hg)
-            from ..analysis.clustering import community_quality_metrics
-            quality = community_quality_metrics(hg, communities)
-            
-            return {
-                'num_communities': float(quality['n_communities']),
-                'modularity': float(quality['modularity'])
-            }
+            if community_quality_metrics is not None:
+                quality = community_quality_metrics(hg, communities)
+                return {
+                    'num_communities': float(quality['n_communities']),
+                    'modularity': float(quality['modularity'])
+                }
+            else:
+                return {
+                    'num_communities': float(len(set(communities.values()))),
+                    'modularity': 0.0
+                }
         except Exception:
             return {'num_communities': 0.0, 'modularity': 0.0}
     
@@ -672,7 +745,7 @@ class StreamingDataIngestion:
 
 
 def stream_from_temporal_hypergraph(
-    temporal_hg: TemporalHypergraph,
+    temporal_hg: Any,  # TemporalHypergraph type
     streaming_hg: StreamingHypergraph,
     replay_speed: float = 1.0
 ) -> None:

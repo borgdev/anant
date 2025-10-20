@@ -96,21 +96,31 @@ class IncidenceStore:
         >>> store = IncidenceStore.from_dict(edge_dict)
         """
         
-        if not edge_dict:
+        if edge_dict is None or (hasattr(edge_dict, 'is_empty') and edge_dict.is_empty()) or (isinstance(edge_dict, dict) and len(edge_dict) == 0):
             return cls()
         
-        # Convert dictionary to DataFrame rows
-        rows = []
-        for edge_id, node_list in edge_dict.items():
-            for node_id in node_list:
-                rows.append({
-                    'edge_id': str(edge_id),
-                    'node_id': str(node_id),
-                    'weight': 1.0
-                })
+        # Handle DataFrame input - convert to dict first
+        if hasattr(edge_dict, 'to_dict') and hasattr(edge_dict, 'columns'):
+            # This is likely a DataFrame, return it directly as IncidenceStore
+            return cls(edge_dict)
         
-        data = pl.DataFrame(rows)
-        return cls(data)
+        # Handle dictionary input
+        if isinstance(edge_dict, dict):
+            # Convert dictionary to DataFrame rows
+            rows = []
+            for edge_id, node_list in edge_dict.items():
+                for node_id in node_list:
+                    rows.append({
+                        'edge_id': str(edge_id),
+                        'node_id': str(node_id),
+                        'weight': 1.0
+                    })
+            
+            data = pl.DataFrame(rows)
+            return cls(data)
+        
+        # If it's neither dict nor DataFrame, try to convert to cls directly
+        return cls(edge_dict)
     
     @classmethod
     def from_pairs(cls, pairs: List[Tuple[Any, Any]], weights: Optional[List[float]] = None) -> 'IncidenceStore':

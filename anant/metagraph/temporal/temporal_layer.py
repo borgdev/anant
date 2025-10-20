@@ -750,3 +750,7 @@ class TemporalLayer:
                 self.lineage_file.stat().st_size if self.lineage_file.exists() else 0
             ]) / (1024 * 1024)
         }
+    
+    def get_summary_statistics(self) -> Dict[str, Any]:
+        """Get summary statistics for temporal data."""
+        return self.get_stats()

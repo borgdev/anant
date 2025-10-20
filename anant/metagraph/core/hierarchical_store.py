@@ -434,3 +434,92 @@ class HierarchicalStore:
             max_child_depth = max(max_child_depth, child_depth)
         
         return 1 + max_child_depth
+    
+    def save(self) -> None:
+        """Save hierarchical store data."""
+        self.save_state()
+    
+    def remove_entity(self, entity_id: str) -> bool:
+        """Remove an entity from the hierarchical store."""
+        try:
+            # Remove from entities
+            self.entities_df = self.entities_df.filter(pl.col("entity_id") != entity_id)
+            
+            # Remove from relationships (both as parent and child)
+            self.relationships_df = self.relationships_df.filter(
+                (pl.col("parent_id") != entity_id) & (pl.col("child_id") != entity_id)
+            )
+            
+            # Save changes
+            self.save_state()
+            return True
+        except Exception:
+            return False
+    
+    def get_entity_level(self, entity_id: str) -> Optional[str]:
+        """Get the level name for an entity."""
+        try:
+            if self.entities_df.is_empty():
+                return None
+            
+            entity_row = self.entities_df.filter(pl.col("entity_id") == entity_id)
+            if entity_row.is_empty():
+                return None
+            
+            return entity_row.select("level_name").item()
+        except Exception:
+            return None
+    
+    def get_entities_at_level_with_parent(self, level: str, parent_id: str) -> List[str]:
+        """Get entities at a specific level with a specific parent."""
+        try:
+            # Get children of the parent
+            children = self.get_children(parent_id)
+            
+            # Filter by level
+            level_entities = []
+            for child in children:
+                child_level = self.get_entity_level(child)
+                if child_level == level:
+                    level_entities.append(child)
+            
+            return level_entities
+        except Exception:
+            return []
+    
+    def remove_entity_from_level(self, entity_id: str) -> bool:
+        """Remove entity from its level."""
+        return self.remove_entity(entity_id)
+    
+    def get_path_to_root(self, entity_id: str) -> List[str]:
+        """Get path from entity to root."""
+        try:
+            path = []
+            current = entity_id
+            visited = set()
+            
+            while current and current not in visited:
+                path.append(current)
+                visited.add(current)
+                current = self.get_parent(current)
+                
+                # Prevent infinite loops
+                if len(path) > 100:
+                    break
+            
+            return path
+        except Exception:
+            return [entity_id]
+    
+    def get_siblings(self, entity_id: str) -> List[str]:
+        """Get sibling entities (same parent)."""
+        try:
+            parent = self.get_parent(entity_id)
+            if not parent:
+                return []
+            
+            siblings = self.get_children(parent)
+            # Remove self from siblings
+            return [s for s in siblings if s != entity_id]
+        except Exception:
+            return []

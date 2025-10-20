@@ -79,7 +79,24 @@ caching = [
     "xxhash>=3.0.0",  # Fast hashing for cache keys
     "msgpack>=1.0.0",  # Efficient serialization
 ]
-all = ["anant[dev,docs,benchmark,viz,gpu,caching]"]
+distributed = [
+    "dask[complete]>=2024.1.0",  # Distributed computing framework
+    "ray[default]>=2.8.0",  # High-performance distributed computing
+    "celery>=5.3.0",  # Distributed task queue
+    "kombu>=5.3.0",  # Message passing library
+    "pyzmq>=25.0.0",  # ZeroMQ for high-performance messaging
+    "grpcio>=1.59.0",  # gRPC for service communication
+    "grpcio-tools>=1.59.0",  # gRPC protocol buffer tools
+    "protobuf>=4.24.0",  # Protocol buffer serialization
+    "cloudpickle>=3.0.0",  # Enhanced pickling for distributed objects
+    "psutil>=5.9.0",  # System monitoring
+    "docker>=6.0.0",  # Container orchestration
+    "metis>=0.2a5",  # METIS graph partitioning library
+    "kahip>=3.16",  # KaHiP high-quality graph partitioner
+    "python-igraph>=0.10.0",  # igraph for additional partitioning algorithms
+    "networkx>=3.0",  # NetworkX for graph algorithms and conversions
+]
+all = ["anant[dev,docs,benchmark,viz,gpu,caching,distributed,streaming]"]
 
 [project.urls]
 Documentation = "https://borgdev.github.io/anant"

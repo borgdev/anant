@@ -136,7 +136,7 @@ class MetadataStore:
             # New entity
             new_version = 1
         
-        # Create new record
+        # Create new record with proper schema
         new_record = pl.DataFrame([{
             "entity_id": entity_id,
             "entity_type": entity_type,
@@ -144,7 +144,14 @@ class MetadataStore:
             "created_at": existing["created_at"][0] if existing.height > 0 else datetime.now(),
             "updated_at": datetime.now(),
             "version": new_version
-        }])
+        }], schema={
+            "entity_id": pl.Utf8,
+            "entity_type": pl.Utf8,
+            "metadata_json": pl.Utf8,
+            "created_at": pl.Datetime,
+            "updated_at": pl.Datetime,
+            "version": pl.Int32
+        })
         
         # Add to metadata DataFrame
         self.metadata_df = pl.concat([self.metadata_df, new_record])
@@ -178,8 +185,15 @@ class MetadataStore:
         if entity_record.height == 0:
             return None
         
-        metadata_json = entity_record["metadata_json"][0]
-        return orjson.loads(metadata_json)
+        # Get the metadata_json column value
+        metadata_json_series = entity_record.select("metadata_json").to_series()
+        if metadata_json_series.len() == 0:
+            return None
+            
+        metadata_json = metadata_json_series[0]
+        if metadata_json:
+            return orjson.loads(metadata_json)
+        return None
     
     def query_entities(self,
                       filters: Dict[str, Any],
@@ -469,3 +483,112 @@ class MetadataStore:
         
         # Save imported data
         self.save_state()
+    
+    def get_all_entity_ids(self) -> List[str]:
+        """Get all entity IDs."""
+        if self.metadata_df.height == 0:
+            return []
+        return self.metadata_df.select("entity_id").to_series().to_list()
+    
+    def add_entity_metadata(self, entity_id: str, entity_type: str, properties: Dict[str, Any], created_by: str = "system") -> bool:
+        """Add metadata for a new entity."""
+        try:
+            self.store_entity_metadata(
+                entity_id=entity_id,
+                metadata=properties,
+                entity_type=entity_type
+            )
+            return True
+        except Exception:
+            return False
+    
+    def delete_metadata(self, entity_id: str, deleted_by: str = "system") -> bool:
+        """Delete metadata for an entity."""
+        try:
+            # Mark as deleted instead of removing (soft delete)
+            if not self.metadata_df.is_empty():
+                self.metadata_df = self.metadata_df.with_columns([
+                    pl.when(pl.col("entity_id") == entity_id)
+                    .then(pl.lit(True))
+                    .otherwise(pl.col("deleted") if "deleted" in self.metadata_df.columns else pl.lit(False))
+                    .alias("deleted"),
+                    pl.when(pl.col("entity_id") == entity_id)
+                    .then(pl.lit(deleted_by))
+                    .otherwise(pl.col("deleted_by") if "deleted_by" in self.metadata_df.columns else pl.lit(None))
+                    .alias("deleted_by")
+                ])
+                self._save_metadata()
+                return True
+            return False
+        except Exception:
+            return False
+    
+    def save(self) -> None:
+        """Save all data to storage."""
+        self.save_state()
+    
+    def update_entity_metadata(self, entity_id: str, updates: Dict[str, Any], updated_by: str = "system") -> bool:
+        """Update existing entity metadata."""
+        try:
+            if self.metadata_df.is_empty():
+                return False
+            
+            # Find the entity
+            entity_mask = self.metadata_df["entity_id"] == entity_id
+            if not entity_mask.any():
+                return False
+            
+            # Get current metadata
+            current_row = self.metadata_df.filter(entity_mask).row(0, named=True)
+            current_metadata = orjson.loads(current_row["metadata_json"]) if current_row["metadata_json"] else {}
+            
+            # Update metadata
+            current_metadata.update(updates)
+            
+            # Update the dataframe
+            self.metadata_df = self.metadata_df.with_columns([
+                pl.when(pl.col("entity_id") == entity_id)
+                .then(pl.lit(orjson.dumps(current_metadata).decode()))
+                .otherwise(pl.col("metadata_json"))
+                .alias("metadata_json"),
+                pl.when(pl.col("entity_id") == entity_id)
+                .then(pl.lit(datetime.now()))
+                .otherwise(pl.col("updated_at"))
+                .alias("updated_at")
+            ])
+            
+            self._save_metadata()
+            return True
+        except Exception:
+            return False
+    
+    def get_metadata(self, entity_id: str) -> Optional[Dict[str, Any]]:
+        """Get metadata for a specific entity."""
+        return self.get_entity_metadata(entity_id)
+    
+    def soft_delete_entity(self, entity_id: str, deleted_by: str = "system") -> bool:
+        """Soft delete an entity (mark as deleted)."""
+        return self.delete_metadata(entity_id, deleted_by)
+    
+    def search_metadata(self, query: str, entity_type: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Search metadata content."""
+        try:
+            result_df = self.search_metadata_content(query)
+            
+            # Filter by entity type if provided
+            if entity_type and not result_df.is_empty():
+                result_df = result_df.filter(pl.col("entity_type") == entity_type)
+            
+            # Convert to list of dicts
+            results = []
+            for row in result_df.to_dicts():
+                results.append({
+                    "entity_id": row["entity_id"],
+                    "entity_type": row["entity_type"],
+                    "metadata": orjson.loads(row["metadata_json"]) if row["metadata_json"] else {},
+                    "created_at": row["created_at"]
+                })
+            
+            return results
+        except Exception:
+            return []

@@ -562,3 +562,75 @@ class SemanticLayer:
             "embedding_types": self.embeddings_df["embedding_type"].unique().to_list(),
             "business_domains": self.business_glossary_df["domain"].unique().to_list()
         }
+    
+    @property
+    def relationships(self) -> Dict[str, Dict[str, Any]]:
+        """Get relationships as a dictionary."""
+        if self.relationships_df.is_empty():
+            return {}
+        
+        result = {}
+        for row in self.relationships_df.to_dicts():
+            rel_id = row["relationship_id"]
+            result[rel_id] = {
+                "source_id": row["source_id"],
+                "target_id": row["target_id"],
+                "relationship_type": row["relationship_type"],
+                "strength": row["strength"],
+                "metadata": orjson.loads(row["metadata"]) if row["metadata"] else {}
+            }
+        return result
+    
+    def add_relationship_type(self, type_name: str, properties: Optional[dict] = None) -> bool:
+        """Add a new relationship type."""
+        try:
+            if properties is None:
+                properties = {}
+            
+            # Create new relationship type record
+            new_type = pl.DataFrame({
+                'type_name': [type_name],
+                'properties': [orjson.dumps(properties).decode()],
+                'created_at': [datetime.now()]
+            })
+            
+            # Initialize relationship_types_df if it doesn't exist
+            if not hasattr(self, 'relationship_types_df') or self.relationship_types_df is None:
+                self.relationship_types_df = new_type
+            else:
+                self.relationship_types_df = self.relationship_types_df.vstack(new_type)
+            
+            return True
+        except Exception:
+            return False
+    
+    def get_relationship_types(self) -> List[str]:
+        """Get all relationship types."""
+        try:
+            if not hasattr(self, 'relationship_types_df') or self.relationship_types_df is None or self.relationship_types_df.is_empty():
+                return []
+            
+            return self.relationship_types_df.select("type_name").to_series().to_list()
+        except Exception:
+            return []
+    
+    def query_relationships(self, relationship_type: Optional[str] = None, source_id: Optional[str] = None, target_id: Optional[str] = None) -> List[dict]:
+        """Query relationships with optional filters."""
+        try:
+            df = self.relationships_df
+            
+            if relationship_type:
+                df = df.filter(pl.col("relationship_type") == relationship_type)
+            
+            if source_id:
+                df = df.filter(pl.col("source_id") == source_id)
+            
+            if target_id:
+                df = df.filter(pl.col("target_id") == target_id)
+            
+            if df.is_empty():
+                return []
+            
+            return df.to_dicts()
+        except Exception:
+            return []
