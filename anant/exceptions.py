@@ -44,10 +44,10 @@ class AnantError(Exception):
         
         # Log the error
         logger.error(
-            "Anant Error",
+            f"Anant Error: {message}",
             extra={
                 "error_code": self.error_code,
-                "message": message,
+                "error_message": message,  # Changed from 'message' to 'error_message'
                 "context": self.context,
                 "timestamp": self.timestamp.isoformat(),
                 "cause": str(cause) if cause else None

@@ -286,3 +286,6 @@ docs/dist/
 # Profiling
 *.prof
 *.cprof
+
+# FHIR data outputs
+fhir/data/output/

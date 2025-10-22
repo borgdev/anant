@@ -56,9 +56,9 @@ def create_community_test_hypergraph() -> Hypergraph:
         ("E12", "I"), ("E12", "J")
     ]
     
-    # Convert to DataFrame
+    # Convert to DataFrame with correct column names
     incidence_df = pl.DataFrame([
-        {"edges": edge, "nodes": node} 
+        {"edge_id": edge, "node_id": node} 
         for edge, node in incidence_data
     ])
     

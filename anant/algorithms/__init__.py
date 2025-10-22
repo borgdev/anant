@@ -39,6 +39,13 @@ try:
 except ImportError as e:
     print(f"Warning: Some clustering algorithms may not be available: {e}")
 
+# Import submodule interfaces for compatibility
+try:
+    from . import centrality
+    from . import clustering
+except ImportError as e:
+    print(f"Warning: Submodule interfaces may not be available: {e}")
+
 try:
     from .correlation_analysis import (
         property_correlation_analysis,
@@ -173,6 +180,10 @@ __all__ = [
     'modularity_optimization',
     'spectral_clustering',
     'hierarchical_clustering',
+    
+    # Submodules
+    'centrality',
+    'clustering',
     
     # Correlation analysis
     'property_correlation_analysis',

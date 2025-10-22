@@ -1,0 +1,79 @@
+
+================================================================================
+🔍 COMPREHENSIVE GRAPH ANALYSIS REPORT
+================================================================================
+
+📊 PERFORMANCE ANALYSIS:
+----------------------------------------
+
+Hypergraph:
+  • creation_case_1: 0.011s (367.9 ops/sec)
+  • degree_computation_case_1: 0.002s (1239.8 ops/sec)
+  • creation_case_2: 0.002s (10037.4 ops/sec)
+  • degree_computation_case_2: 0.008s (2325.6 ops/sec)
+  • creation_case_3: 0.001s (2292.4 ops/sec)
+  • degree_computation_case_3: 0.001s (2257.0 ops/sec)
+  • large_scale_100: 0.003s (32610.0 ops/sec)
+  • large_scale_500: 0.009s (54309.3 ops/sec)
+  • large_scale_1000: 0.015s (65749.7 ops/sec)
+
+KnowledgeGraph:
+  • entity_creation: 0.002s (3211.6 ops/sec)
+  • relationship_creation: 0.006s (1060.1 ops/sec)
+  • large_scale_100: 0.026s (3810.1 ops/sec)
+  • large_scale_500: 0.126s (3966.2 ops/sec)
+  • large_scale_1000: 0.255s (3918.9 ops/sec)
+
+HierarchicalKnowledgeGraph:
+  • hierarchy_creation: 0.006s (1751.3 ops/sec)
+
+Algorithms:
+  • centrality.closeness_centrality: 0.002s (1686.0 ops/sec)
+
+AdvancedKG:
+  • relationship_inference: 0.015s (264.9 ops/sec)
+  • sparql_queries: 0.005s (0.0 ops/sec)
+  • complete_workflow: 0.018s (442.8 ops/sec)
+  • semantic_search_scale_100: 0.002s (63656.2 ops/sec)
+  • sparql_scale_100: 0.000s (233146.4 ops/sec)
+  • semantic_search_scale_500: 0.002s (332564.5 ops/sec)
+  • sparql_scale_500: 0.001s (991092.6 ops/sec)
+  • semantic_search_scale_1000: 0.002s (644385.3 ops/sec)
+  • sparql_scale_1000: 0.000s (2008766.3 ops/sec)
+
+🚨 FUNCTIONALITY GAPS:
+----------------------------------------
+
+HierarchicalKnowledgeGraph:
+  ❌ hierarchy_metrics: Depth, breadth, and structural hierarchy metrics
+  ❌ generate_hierarchy_layout: Automatic hierarchy visualization layout
+
+CrossGraph:
+  ❌ hypergraph_to_kg_conversion: Convert Hypergraph to KnowledgeGraph
+  ❌ kg_to_metagraph_migration: Migrate KnowledgeGraph to Metagraph
+  ❌ unified_query_interface: Unified query interface across all graph types
+  ❌ graph_fusion: Combine multiple graph types into unified structure
+
+⚠️  ERROR PATTERNS:
+----------------------------------------
+
+Hypergraph:
+  🔥 diameter: NameError - name 'deque' is not defined...
+  🔥 modularity: NameError - name 'deque' is not defined...
+
+HierarchicalKnowledgeGraph:
+  🔥 find_cross_level_relationships: TypeError - HierarchicalKnowledgeGraph.find_cross_level_relationships() missing 2 required positional arguments:...
+
+Metagraph:
+  🔥 initialization: ValidationError - Validation error during initializing operation modules: AnalyticsOperations.__init__() got an unexpe...
+  🔥 scalability_100: ValidationError - Validation error during initializing operation modules: AnalyticsOperations.__init__() got an unexpe...
+  🔥 scalability_500: ValidationError - Validation error during initializing operation modules: AnalyticsOperations.__init__() got an unexpe...
+  🔥 scalability_1000: ValidationError - Validation error during initializing operation modules: AnalyticsOperations.__init__() got an unexpe...
+
+Algorithms:
+  🔥 centrality.degree_centrality: AttributeError - module 'anant.algorithms.centrality' has no attribute 'degree_centrality'...
+  🔥 clustering.modularity_clustering: AttributeError - module 'anant.algorithms.clustering' has no attribute 'modularity_clustering'...
+
+AdvancedKG:
+  🔥 ontology_processing: AttributeError - 'OntologyProcessor' object has no attribute 'build_class_hierarchy'...
+  🔥 semantic_search: AttributeError - 'KnowledgeGraph' object has no attribute 'get_entity_type'...

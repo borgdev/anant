@@ -43,7 +43,7 @@ def weighted_node_centrality(hypergraph,
             centrality_data = (
                 data
                 .group_by('node_id')
-                .agg([pl.count().alias('degree')])
+                .agg([pl.len().alias('degree')])
             )
             centrality_dict = dict(zip(
                 centrality_data['node_id'].to_list(),

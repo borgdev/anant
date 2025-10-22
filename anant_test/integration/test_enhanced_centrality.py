@@ -45,7 +45,7 @@ def create_test_hypergraph() -> Hypergraph:
     
     # Convert to DataFrame
     incidence_df = pl.DataFrame([
-        {"edges": edge, "nodes": node} 
+        {"edge_id": edge, "node_id": node} 
         for edge, node in incidence_data
     ])
     

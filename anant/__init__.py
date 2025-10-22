@@ -25,61 +25,245 @@ from .classes.incidence_store import IncidenceStore
 from .classes.property_store import PropertyStore
 from .classes.advanced_properties import AdvancedPropertyStore
 
-# Enhanced SetSystems  
-from .factory.enhanced_setsystems import (
-    EnhancedSetSystemFactory,
-    ParquetSetSystem,
-    MultiModalSetSystem, 
-    StreamingSetSystem
-)
+# Enhanced SetSystems - make lazy to avoid heavy imports
+def _get_enhanced_setsystems():
+    """Lazy import of enhanced setsystems"""
+    from .factory.enhanced_setsystems import (
+        EnhancedSetSystemFactory,
+        ParquetSetSystem,
+        MultiModalSetSystem, 
+        StreamingSetSystem
+    )
+    return {
+        'EnhancedSetSystemFactory': EnhancedSetSystemFactory,
+        'ParquetSetSystem': ParquetSetSystem,
+        'MultiModalSetSystem': MultiModalSetSystem,
+        'StreamingSetSystem': StreamingSetSystem
+    }
 
-# I/O and utilities
-from .io.parquet_io import AnantIO, save_hypergraph, load_hypergraph
-from .io import (
-    # Enhanced file formats
-    quick_import, quick_export, enhanced_formats,
-    # Database connectivity
-    create_sqlite_manager, create_postgresql_manager, create_mongodb_manager,
-    # Streaming processing  
-    create_streaming_hypergraph, StreamEvent, StreamEventType,
-    # Data transformation
-    quick_clean, quick_quality_check, quick_convert
-)
+# I/O and utilities - make lazy to avoid psutil, database drivers, etc.
+def _get_io_modules():
+    """Lazy import of I/O modules"""
+    from .io.parquet_io import AnantIO, save_hypergraph, load_hypergraph
+    from .io import (
+        quick_import, quick_export, enhanced_formats,
+        create_sqlite_manager, create_postgresql_manager, create_mongodb_manager,
+        create_streaming_hypergraph, StreamEvent, StreamEventType,
+        quick_clean, quick_quality_check, quick_convert
+    )
+    return {
+        'AnantIO': AnantIO,
+        'save_hypergraph': save_hypergraph,
+        'load_hypergraph': load_hypergraph,
+        'quick_import': quick_import,
+        'quick_export': quick_export,
+        'enhanced_formats': enhanced_formats,
+        'create_sqlite_manager': create_sqlite_manager,
+        'create_postgresql_manager': create_postgresql_manager,
+        'create_mongodb_manager': create_mongodb_manager,
+        'create_streaming_hypergraph': create_streaming_hypergraph,
+        'StreamEvent': StreamEvent,
+        'StreamEventType': StreamEventType,
+        'quick_clean': quick_clean,
+        'quick_quality_check': quick_quality_check,
+        'quick_convert': quick_convert
+    }
+
+# Only import lightweight utilities
 from .utils.decorators import performance_monitor, cache_result
 from .utils.extras import setup_polars_config
 
-# Advanced Analysis Algorithms
-try:
-    from . import algorithms
-    _HAS_ALGORITHMS = True
-except ImportError as e:
-    print(f"Warning: Advanced algorithms not available: {e}")
-    _HAS_ALGORITHMS = False
+# Create lazy I/O functions
+def AnantIO(*args, **kwargs):
+    """Lazy AnantIO wrapper"""
+    io_modules = _get_io_modules()
+    return io_modules['AnantIO'](*args, **kwargs)
 
-# Analysis modules
-try:
-    from . import analysis
-    _HAS_ANALYSIS = True
-except ImportError as e:
-    print(f"Warning: Analysis modules not available: {e}")
-    _HAS_ANALYSIS = False
+def save_hypergraph(*args, **kwargs):
+    """Lazy save_hypergraph wrapper"""
+    io_modules = _get_io_modules()
+    return io_modules['save_hypergraph'](*args, **kwargs)
 
-# Governance modules
-try:
-    from . import governance
-    _HAS_GOVERNANCE = True
-except ImportError as e:
-    print(f"Warning: Governance modules not available: {e}")
-    _HAS_GOVERNANCE = False
+def load_hypergraph(*args, **kwargs):
+    """Lazy load_hypergraph wrapper"""
+    io_modules = _get_io_modules()
+    return io_modules['load_hypergraph'](*args, **kwargs)
 
-# Development tools
-from .debugging_tools import (
-    debug_hypergraph,
-    start_profiling,
-    stop_profiling,
-    PerformanceProfiler,
-    DataIntegrityValidator
-)
+# More lazy I/O wrappers...
+def quick_import(*args, **kwargs):
+    io_modules = _get_io_modules()
+    return io_modules['quick_import'](*args, **kwargs)
+
+def quick_export(*args, **kwargs):
+    io_modules = _get_io_modules()
+    return io_modules['quick_export'](*args, **kwargs)
+
+def enhanced_formats(*args, **kwargs):
+    io_modules = _get_io_modules()
+    return io_modules['enhanced_formats'](*args, **kwargs)
+
+def create_sqlite_manager(*args, **kwargs):
+    io_modules = _get_io_modules()
+    return io_modules['create_sqlite_manager'](*args, **kwargs)
+
+def create_postgresql_manager(*args, **kwargs):
+    io_modules = _get_io_modules()
+    return io_modules['create_postgresql_manager'](*args, **kwargs)
+
+def create_mongodb_manager(*args, **kwargs):
+    io_modules = _get_io_modules()
+    return io_modules['create_mongodb_manager'](*args, **kwargs)
+
+def create_streaming_hypergraph(*args, **kwargs):
+    io_modules = _get_io_modules()
+    return io_modules['create_streaming_hypergraph'](*args, **kwargs)
+
+# Lazy enhanced setsystem classes
+class EnhancedSetSystemFactory:
+    """Lazy wrapper for EnhancedSetSystemFactory"""
+    def __new__(cls, *args, **kwargs):
+        setsystems = _get_enhanced_setsystems()
+        return setsystems['EnhancedSetSystemFactory'](*args, **kwargs)
+
+class ParquetSetSystem:
+    """Lazy wrapper for ParquetSetSystem"""
+    def __new__(cls, *args, **kwargs):
+        setsystems = _get_enhanced_setsystems()
+        return setsystems['ParquetSetSystem'](*args, **kwargs)
+
+class MultiModalSetSystem:
+    """Lazy wrapper for MultiModalSetSystem"""
+    def __new__(cls, *args, **kwargs):
+        setsystems = _get_enhanced_setsystems()
+        return setsystems['MultiModalSetSystem'](*args, **kwargs)
+
+class StreamingSetSystem:
+    """Lazy wrapper for StreamingSetSystem"""
+    def __new__(cls, *args, **kwargs):
+        setsystems = _get_enhanced_setsystems()
+        return setsystems['StreamingSetSystem'](*args, **kwargs)
+
+# LAZY IMPORTS FOR PERFORMANCE OPTIMIZATION
+# Advanced Analysis Algorithms - Lazy loaded to avoid 2000+ module cascade
+_HAS_ALGORITHMS = True
+_HAS_ANALYSIS = True  
+_HAS_GOVERNANCE = True
+
+def _get_algorithms():
+    """Lazy import of algorithms module"""
+    try:
+        from . import algorithms
+        return algorithms
+    except ImportError as e:
+        print(f"Warning: Advanced algorithms not available: {e}")
+        return None
+
+def _get_analysis():
+    """Lazy import of analysis module"""
+    try:
+        from . import analysis
+        return analysis
+    except ImportError as e:
+        print(f"Warning: Analysis modules not available: {e}")
+        return None
+
+def _get_governance():
+    """Lazy import of governance module"""
+    try:
+        from . import governance
+        return governance
+    except ImportError as e:
+        print(f"Warning: Governance modules not available: {e}")
+        return None
+
+def _get_debugging_tools():
+    """Lazy import of debugging tools"""
+    from .debugging_tools import (
+        debug_hypergraph,
+        start_profiling,
+        stop_profiling,
+        PerformanceProfiler,
+        DataIntegrityValidator
+    )
+    return {
+        'debug_hypergraph': debug_hypergraph,
+        'start_profiling': start_profiling,
+        'stop_profiling': stop_profiling,
+        'PerformanceProfiler': PerformanceProfiler,
+        'DataIntegrityValidator': DataIntegrityValidator
+    }
+
+# Create lazy accessors
+class LazyModuleAccessor:
+    """Provides lazy access to heavy modules"""
+    
+    @property
+    def algorithms(self):
+        return _get_algorithms()
+    
+    @property  
+    def analysis(self):
+        return _get_analysis()
+        
+    @property
+    def governance(self):
+        return _get_governance()
+
+# Global lazy accessor
+_lazy = LazyModuleAccessor()
+
+# Make debugging tools available on-demand
+def debug_hypergraph(*args, **kwargs):
+    """Debug hypergraph - lazy loaded"""
+    tools = _get_debugging_tools()
+    return tools['debug_hypergraph'](*args, **kwargs)
+
+def start_profiling(*args, **kwargs):
+    """Start profiling - lazy loaded"""
+    tools = _get_debugging_tools()
+    return tools['start_profiling'](*args, **kwargs)
+
+def stop_profiling(*args, **kwargs):
+    """Stop profiling - lazy loaded"""
+    tools = _get_debugging_tools()
+    return tools['stop_profiling'](*args, **kwargs)
+
+class LazyPerformanceProfiler:
+    """Lazy wrapper for PerformanceProfiler"""
+    def __new__(cls, *args, **kwargs):
+        tools = _get_debugging_tools()
+        return tools['PerformanceProfiler'](*args, **kwargs)
+
+class LazyDataIntegrityValidator:
+    """Lazy wrapper for DataIntegrityValidator"""
+    def __new__(cls, *args, **kwargs):
+        tools = _get_debugging_tools()
+        return tools['DataIntegrityValidator'](*args, **kwargs)
+
+# Assign to module level for direct access
+PerformanceProfiler = LazyPerformanceProfiler
+DataIntegrityValidator = LazyDataIntegrityValidator
+
+# Expose lazy modules at module level
+algorithms = property(lambda self: _lazy.algorithms)
+analysis = property(lambda self: _lazy.analysis) 
+governance = property(lambda self: _lazy.governance)
+
+# Create module-level properties for lazy access
+def __getattr__(name):
+    """Provide lazy access to heavy modules and I/O functions"""
+    if name == 'algorithms':
+        return _get_algorithms()
+    elif name == 'analysis':
+        return _get_analysis()
+    elif name == 'governance':
+        return _get_governance()
+    elif name in ['StreamEvent', 'StreamEventType', 'quick_clean', 'quick_quality_check', 'quick_convert']:
+        # Lazy I/O module access
+        io_modules = _get_io_modules()
+        return io_modules[name]
+    else:
+        raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 # Jupyter integration (conditional import) - temporarily disabled
 # try:

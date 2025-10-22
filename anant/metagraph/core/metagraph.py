@@ -68,9 +68,8 @@ class Metagraph:
             )
             
             self.analytics_ops = AnalyticsOperations(
-                storage_path=str(self.storage_path / "analytics"),
                 metadata_store=self.metadata_store,
-                config=self.config.get("analytics", {})
+                hierarchical_store=self.hierarchical_store
             )
             
             self.governance_ops = GovernanceOperations(
@@ -190,9 +189,9 @@ class Metagraph:
                                include_advanced: bool = False) -> GraphMetrics:
         return self.graph_ops.calculate_graph_metrics(entity_filter, include_advanced)
     
-    def extract_subgraph(self, node_ids: List[str], include_neighbors: bool = False,
+    def extract_subgraph(self, entity_ids: List[str], include_neighbors: bool = False,
                         neighbor_depth: int = 1, preserve_connectivity: bool = True) -> Dict[str, Any]:
-        return self.graph_ops.extract_subgraph(node_ids, include_neighbors, neighbor_depth, preserve_connectivity)
+        return self.graph_ops.extract_subgraph(entity_ids, include_neighbors, neighbor_depth, preserve_connectivity)
     
     # High-level utility methods
     def get_statistics(self) -> Dict[str, Any]:
@@ -206,7 +205,7 @@ class Metagraph:
                 "created_at": self.created_at.isoformat(),
                 "entities": entity_stats,
                 "graph_metrics": {
-                    "node_count": graph_metrics.node_count,
+                    "entity_count": graph_metrics.node_count,
                     "edge_count": graph_metrics.edge_count,
                     "density": graph_metrics.density,
                     "connected_components": graph_metrics.connected_components

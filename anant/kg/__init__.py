@@ -7,7 +7,8 @@ Provides advanced querying, reasoning, entity resolution, and ontology analysis 
 """
 
 from .core import SemanticHypergraph, KnowledgeGraph
-from .hierarchical import HierarchicalKnowledgeGraph, create_domain_hierarchy, create_research_hierarchy, create_enterprise_hierarchy
+from .hierarchical import HierarchicalKnowledgeGraph
+from .hierarchical_helpers import create_domain_hierarchy, create_research_hierarchy, create_enterprise_hierarchy
 from .query import SemanticQueryEngine, SPARQLEngine
 from .ontology import OntologyAnalyzer, SchemaExtractor
 from .entity import EntityResolver, EntityLinker
@@ -27,7 +28,9 @@ from .federated_query import (
 # Natural Language Interface
 from .natural_language import (
     NaturalLanguageInterface,
-    QueryResult,
+    NaturalLanguageResult as QueryResult
+)
+from .natural_language_types import (
     QueryInterpretation,
     ConversationContext,
     EntityMention,

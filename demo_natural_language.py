@@ -17,6 +17,9 @@ from datetime import datetime
 from anant.kg import KnowledgeGraph
 from anant.kg.natural_language import (
     NaturalLanguageInterface,
+    NaturalLanguageResult
+)
+from anant.kg.natural_language_types import (
     Intent,
     QueryType,
     ConfidenceLevel
@@ -170,9 +173,14 @@ def demo_basic_query_processing():
     federated_engine = create_mock_federated_engine()
     
     # Create natural language interface
+    config = {
+        'knowledge_graph': kg,
+        'federated_query_engine': federated_engine,
+        'use_transformers': False
+    }
     nl_interface = NaturalLanguageInterface(
-        knowledge_graph=kg,
-        federated_engine=federated_engine,
+        config=config,
+        federated_query_engine=federated_engine,
         use_transformers=False  # Disable transformers for demo
     )
     
@@ -193,9 +201,12 @@ def demo_basic_query_processing():
         
         print(f"Intent: {result.interpretation.intent.value}")
         print(f"Query Type: {result.interpretation.query_type.value}")
-        print(f"Confidence: {result.interpretation.confidence:.2f} ({result.metadata['confidence_level'].value})")
-        print(f"Formal Query: {result.formal_query[:100]}{'...' if len(result.formal_query) > 100 else ''}")
-        print(f"Response: {result.response_text}")
+        print(f"Confidence: {result.interpretation.confidence:.2f}")
+        if result.formal_query:
+            print(f"Formal Query: {result.formal_query[:100]}{'...' if len(result.formal_query) > 100 else ''}")
+        else:
+            print("Formal Query: None")
+        print(f"Response: {result.response}")
         
         if result.execution_result:
             print(f"Results Count: {result.execution_result.total_rows}")
@@ -217,9 +228,14 @@ def demo_conversation_context():
     kg = create_sample_data()
     federated_engine = create_mock_federated_engine()
     
+    config = {
+        'knowledge_graph': kg,
+        'federated_query_engine': federated_engine,
+        'use_transformers': False
+    }
     nl_interface = NaturalLanguageInterface(
-        knowledge_graph=kg,
-        federated_engine=federated_engine,
+        config=config,
+        federated_query_engine=federated_engine,
         use_transformers=False
     )
     
@@ -245,7 +261,7 @@ def demo_conversation_context():
             user_id="demo_user"
         )
         
-        print(f"[Turn {i}] Assistant: {result.response_text}")
+        print(f"[Turn {i}] Assistant: {result.response}")
         
         if result.interpretation.confidence < 0.5:
             print(f"[Turn {i}] Low confidence. Suggestions: {', '.join(result.suggestions[:2])}")
@@ -268,9 +284,14 @@ def demo_entity_extraction():
     kg = create_sample_data()
     federated_engine = create_mock_federated_engine()
     
+    config = {
+        'knowledge_graph': kg,
+        'federated_query_engine': federated_engine,
+        'use_transformers': False
+    }
     nl_interface = NaturalLanguageInterface(
-        knowledge_graph=kg,
-        federated_engine=federated_engine,
+        config=config,
+        federated_query_engine=federated_engine,
         use_transformers=False
     )
     
@@ -317,9 +338,14 @@ def demo_query_types():
     kg = create_sample_data()
     federated_engine = create_mock_federated_engine()
     
+    config = {
+        'knowledge_graph': kg,
+        'federated_query_engine': federated_engine,
+        'use_transformers': False
+    }
     nl_interface = NaturalLanguageInterface(
-        knowledge_graph=kg,
-        federated_engine=federated_engine,
+        config=config,
+        federated_query_engine=federated_engine,
         use_transformers=False
     )
     
@@ -375,9 +401,14 @@ def demo_performance_stats():
     kg = create_sample_data()
     federated_engine = create_mock_federated_engine()
     
+    config = {
+        'knowledge_graph': kg,
+        'federated_query_engine': federated_engine,
+        'use_transformers': False
+    }
     nl_interface = NaturalLanguageInterface(
-        knowledge_graph=kg,
-        federated_engine=federated_engine,
+        config=config,
+        federated_query_engine=federated_engine,
         use_transformers=False
     )
     
@@ -406,7 +437,6 @@ def demo_performance_stats():
     print(f"Successful interpretations: {stats['processing_stats']['successful_interpretations']}")
     print(f"Average confidence: {stats['processing_stats']['average_confidence']:.3f}")
     print(f"Cache hits: {stats['processing_stats']['cache_hits']}")
-    print(f"Cache hit rate: {stats['cache_stats']['cache_hit_rate']:.2%}")
     
     print(f"\n🎯 Intent Distribution:")
     print("-" * 20)
@@ -420,21 +450,21 @@ def demo_performance_stats():
         if count > 0:
             print(f"  {query_type}: {count}")
     
-    print(f"\n💬 Conversation Statistics:")
+    print(f"\n💬 Context Statistics:")
     print("-" * 25)
-    print(f"Active conversations: {stats['conversation_stats']['active_conversations']}")
-    print(f"Total context entities: {stats['conversation_stats']['total_context_entities']}")
+    context_stats = stats.get('context_stats', {})
+    print(f"Active conversations: {context_stats.get('active_conversations', 0)}")
+    print(f"Total context entities: {context_stats.get('total_context_entities', 0)}")
     
     # Show recent performance profile
     print(f"\n⏱️  Recent Query Performance:")
     print("-" * 27)
     print(f"Query: \"{test_queries[-1]}\"")
     result = nl_interface.process_query("Sample performance query")
-    if 'profiler_report' in result.metadata:
-        profile = result.metadata['profiler_report']
-        print(f"Total time: {profile['total_execution_time']:.4f}s")
-        print(f"Slowest checkpoint: {profile['checkpoint_analysis']['slowest_checkpoint']}")
-        print(f"Fastest checkpoint: {profile['checkpoint_analysis']['fastest_checkpoint']}")
+    print(f"Processing time: {result.processing_time:.4f}s")
+    print(f"Success: {result.success}")
+    if result.error:
+        print(f"Error: {result.error}")
 
 
 def main():
