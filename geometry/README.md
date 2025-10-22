@@ -183,9 +183,41 @@ correlations = property_manifold.property_curvature()
 - Multi-property geometry
 - Property correlations via curvature
 
+### **2. Domain Geometry** (`domains/`)
+
+**TimeSeriesManifold**
+- Time series as cyclic geodesics
+- Curvature-based anomaly detection
+- Geodesic forecasting
+
+**NetworkFlowManifold**
+- Builds flow vector fields
+- Divergence reveals bottlenecks and influence sources
+- Curl highlights rotational communities / echo chambers
+
+**FinancialManifold**
+- Risk metric from asset statistics
+- Geodesic distance as diversification score
+- Curvature-driven systemic risk index
+
+**MolecularManifold**
+- Property-driven configuration manifold
+- Reaction paths via geodesic interpolation
+- Detects strained conformers (high curvature)
+
+**PhaseSpaceManifold**
+- Dynamical systems stability via Lyapunov exponents
+- Curvature signals chaos vs. order
+- Identifies approximate invariants
+
+**SemanticManifold**
+- Embeddings as manifold coordinates
+- Parallel transport solves analogies
+- Curvature quantifies polysemy / semantic drift
+
 ---
 
-### **2. Manifold Types** (`manifolds/`)
+### **3. Future Manifold Types** (`manifolds/`)
 
 **HypergraphManifold**
 - Hyperedges as higher-dimensional simplices
@@ -203,7 +235,7 @@ correlations = property_manifold.property_curvature()
 
 ---
 
-### **3. Geometric Metrics** (`metrics/`)
+### **4. Geometric Metrics** (`metrics/`)
 
 **CurvatureMetrics**
 - Gaussian curvature (2D)
@@ -223,7 +255,7 @@ correlations = property_manifold.property_curvature()
 
 ---
 
-### **4. Visualization** (`visualization/`)
+### **5. Visualization** (`visualization/`)
 
 **ManifoldPlotter**
 - Embed in 2D/3D preserving curvature
