@@ -133,3 +133,130 @@ polysemy = sm.polysemy_score("bank")
 ---
 
 Curvature replaces heuristics. Geometry itself surfaces the stories hidden inside each modality.
+
+
+---
+
+## Spread Dynamics (`SpreadDynamicsManifold`)
+
+Universal contagion/propagation framework.
+
+- **Applies to**: epidemic spread, viral content, network failures, financial contagion, trait propagation
+- Curvature acceleration zones locate outbreak sources
+- Geodesics trace propagation pathways
+- R0 estimation from network geometry
+- Helper: `detect_spread_hotspots()`
+
+```python
+from geometry.domains import SpreadDynamicsManifold
+
+epidemic = SpreadDynamicsManifold(contact_network, 'infection_rate')
+hotspots = epidemic.detect_acceleration_zones()
+sources = epidemic.find_propagation_sources()
+r0 = epidemic.estimate_r0()
+```
+
+---
+
+## Allocation (`AllocationManifold`)
+
+Multi-resource optimization framework.
+
+- **Applies to**: healthcare resources (beds, nurses), cloud (CPU, memory), logistics, energy grids
+- Scarcity-weighted metric tensor
+- Curvature reveals allocation stress/imbalance
+- Geodesics provide optimal reallocation paths
+- Helper: `find_allocation_stress()`
+
+```python
+from geometry.domains import AllocationManifold
+
+resources = AllocationManifold(allocations, capacities)
+stress = resources.detect_stress_points()
+transfers = resources.suggest_optimal_transfers(stressed_entity='ICU-A')
+```
+
+---
+
+## Process (`ProcessManifold`)
+
+Workflow/pipeline analysis framework.
+
+- **Applies to**: manufacturing pipelines, healthcare pathways, software CI/CD, business processes
+- Curvature identifies process friction/bottlenecks
+- Geodesics reveal streamlined workflow paths
+- Failure-prone step detection
+- Helper: `find_workflow_bottlenecks()`
+
+```python
+from geometry.domains import ProcessManifold
+
+workflow = ProcessManifold(production_pipeline)
+bottlenecks = workflow.find_bottlenecks()
+optimal = workflow.discover_streamlined_path(start, end)
+improvements = workflow.suggest_process_improvements()
+```
+
+---
+
+## Matching (`MatchingManifold`)
+
+Similarity-based pairing framework.
+
+- **Applies to**: patient-trial matching, HR recruitment, education, dating, rideshare
+- Geodesic distance measures match quality
+- Natural clustering discovers groups
+- Bidirectional or directional matching
+- Helper: `find_best_matches()`
+
+```python
+from geometry.domains import MatchingManifold
+
+matching = MatchingManifold(set_a=patients, set_b=trials)
+matches = matching.find_optimal_matches(entity_id='patient-123', top_k=5)
+groups = matching.discover_natural_groups()
+```
+
+---
+
+## Hierarchical (`HierarchicalManifold`)
+
+Multi-level system analysis via fiber bundle geometry.
+
+- **Applies to**: healthcare systems (patient → department → hospital), organizations, geography, infrastructure
+- Vertical structure = hierarchy levels
+- Cross-level impact propagation
+- Metric aggregation across levels
+- Escalation path computation
+
+```python
+from geometry.domains import HierarchicalManifold
+
+hierarchy = HierarchicalManifold(org_structure, level_names=['employee', 'team', 'division'])
+impact = hierarchy.compute_cross_level_impact('dept-A', change={'budget': -100K})
+aggregated = hierarchy.aggregate_metrics(level=2, aggregation='sum')
+path = hierarchy.compute_escalation_path('employee-42', target_level=3)
+```
+
+---
+
+## Updated Summary Table
+
+| Domain | Manifold | Key Signal | Helper | Scope |
+|--------|----------|------------|--------|-------|
+| Property | `PropertyManifold` | Correlation curvature | — | General |
+| Time Series | `TimeSeriesManifold` | Curvature spikes | `detect_cycles_geometric` | Domain |
+| Network Flow | `NetworkFlowManifold` | Divergence / curl | `find_bottlenecks_geometric` | Domain |
+| Finance | `FinancialManifold` | Geodesic risk | `compute_risk_geometric` | Domain |
+| Molecular | `MolecularManifold` | Strain curvature | `find_strained_conformers_geometric` | Domain |
+| Phase Space | `PhaseSpaceManifold` | Lyapunov exponent | — | Domain |
+| Semantic | `SemanticManifold` | Polysemy curvature | — | Domain |
+| **Spread** | **`SpreadDynamicsManifold`** | **Acceleration zones** | **`detect_spread_hotspots`** | **General** |
+| **Allocation** | **`AllocationManifold`** | **Stress curvature** | **`find_allocation_stress`** | **General** |
+| **Process** | **`ProcessManifold`** | **Friction curvature** | **`find_workflow_bottlenecks`** | **General** |
+| **Matching** | **`MatchingManifold`** | **Match distance** | **`find_best_matches`** | **General** |
+| **Hierarchy** | **`HierarchicalManifold`** | **Cross-level impact** | **—** | **General** |
+
+---
+
+**General-Purpose manifolds** apply to multiple domains. **Domain-Specific manifolds** target specialized use cases. Together they cover ~95% of real-world analytics needs through unified geometric framework.

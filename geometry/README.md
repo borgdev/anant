@@ -215,6 +215,36 @@ correlations = property_manifold.property_curvature()
 - Parallel transport solves analogies
 - Curvature quantifies polysemy / semantic drift
 
+**SpreadDynamicsManifold** (General-Purpose)
+- Universal contagion/propagation framework
+- Applies to: epidemic, viral content, network failures, financial contagion
+- Curvature = spread acceleration zones
+- Geodesics = propagation paths
+
+**AllocationManifold** (General-Purpose)
+- Multi-resource optimization framework
+- Applies to: healthcare resources, cloud allocation, logistics, energy grids
+- Curvature = allocation stress/imbalance
+- Geodesics = optimal reallocation paths
+
+**ProcessManifold** (General-Purpose)
+- Workflow/pipeline analysis framework
+- Applies to: manufacturing, software CI/CD, business processes, supply chain
+- Curvature = process friction/complexity
+- Geodesics = streamlined workflows
+
+**MatchingManifold** (General-Purpose)
+- Similarity-based pairing framework
+- Applies to: patient-trial matching, HR recruitment, education, dating
+- Geodesic distance = match quality
+- Clusters = natural groupings
+
+**HierarchicalManifold** (General-Purpose)
+- Multi-level system analysis
+- Applies to: healthcare systems, organizations, geography, infrastructure
+- Vertical = hierarchy levels, horizontal = within-level
+- Cross-level impact propagation via fiber bundle geometry
+
 ---
 
 ### **3. Future Manifold Types** (`manifolds/`)
