@@ -183,9 +183,71 @@ correlations = property_manifold.property_curvature()
 - Multi-property geometry
 - Property correlations via curvature
 
+### **2. Domain Geometry** (`domains/`)
+
+**TimeSeriesManifold**
+- Time series as cyclic geodesics
+- Curvature-based anomaly detection
+- Geodesic forecasting
+
+**NetworkFlowManifold**
+- Builds flow vector fields
+- Divergence reveals bottlenecks and influence sources
+- Curl highlights rotational communities / echo chambers
+
+**FinancialManifold**
+- Risk metric from asset statistics
+- Geodesic distance as diversification score
+- Curvature-driven systemic risk index
+
+**MolecularManifold**
+- Property-driven configuration manifold
+- Reaction paths via geodesic interpolation
+- Detects strained conformers (high curvature)
+
+**PhaseSpaceManifold**
+- Dynamical systems stability via Lyapunov exponents
+- Curvature signals chaos vs. order
+- Identifies approximate invariants
+
+**SemanticManifold**
+- Embeddings as manifold coordinates
+- Parallel transport solves analogies
+- Curvature quantifies polysemy / semantic drift
+
+**SpreadDynamicsManifold** (General-Purpose)
+- Universal contagion/propagation framework
+- Applies to: epidemic, viral content, network failures, financial contagion
+- Curvature = spread acceleration zones
+- Geodesics = propagation paths
+
+**AllocationManifold** (General-Purpose)
+- Multi-resource optimization framework
+- Applies to: healthcare resources, cloud allocation, logistics, energy grids
+- Curvature = allocation stress/imbalance
+- Geodesics = optimal reallocation paths
+
+**ProcessManifold** (General-Purpose)
+- Workflow/pipeline analysis framework
+- Applies to: manufacturing, software CI/CD, business processes, supply chain
+- Curvature = process friction/complexity
+- Geodesics = streamlined workflows
+
+**MatchingManifold** (General-Purpose)
+- Similarity-based pairing framework
+- Applies to: patient-trial matching, HR recruitment, education, dating
+- Geodesic distance = match quality
+- Clusters = natural groupings
+
+**HierarchicalManifold** (General-Purpose)
+- Multi-level system analysis
+- Applies to: healthcare systems, organizations, geography, infrastructure
+- Vertical = hierarchy levels, horizontal = within-level
+- Cross-level impact propagation via fiber bundle geometry
+
 ---
 
-### **2. Manifold Types** (`manifolds/`)
+### **3. Future Manifold Types** (`manifolds/`)
 
 **HypergraphManifold**
 - Hyperedges as higher-dimensional simplices
@@ -203,7 +265,7 @@ correlations = property_manifold.property_curvature()
 
 ---
 
-### **3. Geometric Metrics** (`metrics/`)
+### **4. Geometric Metrics** (`metrics/`)
 
 **CurvatureMetrics**
 - Gaussian curvature (2D)
@@ -223,7 +285,7 @@ correlations = property_manifold.property_curvature()
 
 ---
 
-### **4. Visualization** (`visualization/`)
+### **5. Visualization** (`visualization/`)
 
 **ManifoldPlotter**
 - Embed in 2D/3D preserving curvature
