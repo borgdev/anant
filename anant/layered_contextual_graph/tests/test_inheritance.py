@@ -25,7 +25,7 @@ except ImportError:
     ANANT_AVAILABLE = False
     print("❌ Anant core library not available")
 
-from layered_contextual_graph.core import LayeredContextualGraph, LayerType, ContextType
+from anant.layered_contextual_graph.core import LayeredContextualGraph, LayerType, ContextType
 
 
 def test_inheritance_chain():
@@ -146,7 +146,7 @@ def test_context_management():
     lcg = LayeredContextualGraph(name="test_contexts")
     
     # Add context
-    from layered_contextual_graph.core import Context
+    from anant.layered_contextual_graph.core import Context
     
     lcg.add_context(
         "temporal",

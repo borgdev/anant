@@ -33,8 +33,8 @@ except ImportError:
             self.name = kwargs.get('name', 'hypergraph')
 
 # Import LCG with extensions
-from layered_contextual_graph.core import LayeredContextualGraph, LayerType, ContextType
-from layered_contextual_graph.extensions import (
+from anant.layered_contextual_graph.core import LayeredContextualGraph, LayerType, ContextType
+from anant.layered_contextual_graph.extensions import (
     StreamingLayeredGraph,
     MLLayeredGraph,
     ReasoningLayeredGraph,
@@ -104,7 +104,7 @@ def demo_ml(lcg):
     print("="*70)
     
     # Convert to ML-enabled graph
-    from layered_contextual_graph.extensions import enable_ml
+    from anant.layered_contextual_graph.extensions import enable_ml
     ml_lcg = enable_ml(lcg, embedding_dim=128)
     
     print("✅ Enabled ML capabilities")
@@ -153,7 +153,7 @@ def demo_reasoning(lcg):
     print("="*70)
     
     # Convert to reasoning-enabled graph
-    from layered_contextual_graph.extensions import enable_reasoning
+    from anant.layered_contextual_graph.extensions import enable_reasoning
     r_lcg = enable_reasoning(lcg, auto_detect=True)
     
     print("✅ Enabled reasoning capabilities")

@@ -309,7 +309,7 @@ layered_contextual_graph/
 
 ### **1. Basic LCG**
 ```python
-from layered_contextual_graph.core import LayeredContextualGraph, LayerType
+from anant.layered_contextual_graph.core import LayeredContextualGraph, LayerType
 
 lcg = LayeredContextualGraph(name="my_graph")
 lcg.add_layer("physical", physical_hg, LayerType.PHYSICAL, level=0)
@@ -323,7 +323,7 @@ result = lcg.query_across_layers("entity_1")
 
 ### **2. Mission-Critical Production**
 ```python
-from layered_contextual_graph.production import (
+from anant.layered_contextual_graph.production import (
     MissionCriticalLCG,
     ProductionConfig
 )
@@ -342,7 +342,7 @@ status = mcg.get_system_status()
 
 ### **3. Property Analytics**
 ```python
-from layered_contextual_graph.analytics import (
+from anant.layered_contextual_graph.analytics import (
     PropertyAnalytics,
     derive_contexts_from_properties
 )
@@ -351,13 +351,13 @@ from layered_contextual_graph.analytics import (
 contexts = derive_contexts_from_properties(lcg, auto_apply=True)
 
 # Fast indexed queries
-from layered_contextual_graph.analytics import IndexAnalytics
+from anant.layered_contextual_graph.analytics import IndexAnalytics
 ia = IndexAnalytics(lcg)
 ia.build_cross_layer_index('category')
 sensors = ia.find_by_property_value('category', 'sensor')
 
 # Tag clustering
-from layered_contextual_graph.analytics import TagAnalytics
+from anant.layered_contextual_graph.analytics import TagAnalytics
 ta = TagAnalytics(lcg)
 clusters = ta.cluster_by_tags()
 ```

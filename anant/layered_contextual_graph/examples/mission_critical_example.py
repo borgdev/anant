@@ -32,8 +32,8 @@ except ImportError:
             self.data = data
             self.name = kwargs.get('name', 'hg')
 
-from layered_contextual_graph.core import LayerType
-from layered_contextual_graph.production import (
+from anant.layered_contextual_graph.core import LayerType
+from anant.layered_contextual_graph.production import (
     MissionCriticalLCG,
     ProductionConfig,
     DistributedConfig,
@@ -134,7 +134,7 @@ def main():
         print(f"⚠️  Note: Some features require backends (Redis, etc.): {e}")
         print("   Continuing with available features...")
         # Fallback to basic LCG for demo
-        from layered_contextual_graph.core import LayeredContextualGraph
+        from anant.layered_contextual_graph.core import LayeredContextualGraph
         mcg = LayeredContextualGraph(name="fallback_demo")
     
     # ========================================

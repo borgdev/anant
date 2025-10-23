@@ -15,9 +15,9 @@ import sys
 from pathlib import Path
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
-from geometry.domains import TimeSeriesManifold, detect_cycles_geometric
+from anant.geometry.domains import TimeSeriesManifold, detect_cycles_geometric
 
 
 def main():

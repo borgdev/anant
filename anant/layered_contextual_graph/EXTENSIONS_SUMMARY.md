@@ -240,7 +240,7 @@ layered_contextual_graph/
 
 ### **1. Streaming Only**
 ```python
-from layered_contextual_graph.extensions import StreamingLayeredGraph
+from anant.layered_contextual_graph.extensions import StreamingLayeredGraph
 
 slcg = StreamingLayeredGraph(name="streaming_kg")
 
@@ -253,7 +253,7 @@ slcg.add_layer("physical", hg, LayerType.PHYSICAL, level=0)
 
 ### **2. ML Only**
 ```python
-from layered_contextual_graph.extensions import MLLayeredGraph
+from anant.layered_contextual_graph.extensions import MLLayeredGraph
 
 ml_lcg = MLLayeredGraph(name="ml_kg", embedding_dim=768)
 
@@ -266,7 +266,7 @@ results = ml_lcg.similarity_search(query_emb, top_k=10)
 
 ### **3. Reasoning Only**
 ```python
-from layered_contextual_graph.extensions import ReasoningLayeredGraph
+from anant.layered_contextual_graph.extensions import ReasoningLayeredGraph
 
 r_lcg = ReasoningLayeredGraph(name="reasoning_kg")
 
@@ -279,7 +279,7 @@ facts = r_lcg.infer_cross_layer("entity", "physical", "semantic")
 
 ### **4. All Combined**
 ```python
-from layered_contextual_graph.extensions import (
+from anant.layered_contextual_graph.extensions import (
     enable_streaming,
     enable_ml,
     enable_reasoning
@@ -410,7 +410,7 @@ cd /Users/binoyayyagari/anant/anant/layered_contextual_graph
 
 ### **Import Extensions**
 ```python
-from layered_contextual_graph.extensions import (
+from anant.layered_contextual_graph.extensions import (
     StreamingLayeredGraph,
     MLLayeredGraph,
     ReasoningLayeredGraph,

@@ -26,7 +26,7 @@ LayeredContextualGraph now includes **property-level analytics** that leverage A
 
 **Example**:
 ```python
-from layered_contextual_graph.analytics import PropertyAnalytics
+from anant.layered_contextual_graph.analytics import PropertyAnalytics
 
 pa = PropertyAnalytics(lcg)
 
@@ -67,7 +67,7 @@ evolution = pa.track_property_evolution("entity_1", "priority")
 
 **Example**:
 ```python
-from layered_contextual_graph.analytics import IndexAnalytics
+from anant.layered_contextual_graph.analytics import IndexAnalytics
 
 ia = IndexAnalytics(lcg)
 
@@ -113,7 +113,7 @@ gaps = ia.find_property_gaps()
 
 **Example**:
 ```python
-from layered_contextual_graph.analytics import TagAnalytics
+from anant.layered_contextual_graph.analytics import TagAnalytics
 
 ta = TagAnalytics(lcg, tag_property='tags')
 
@@ -233,7 +233,7 @@ Context(
 ### **Usage**
 
 ```python
-from layered_contextual_graph.analytics import derive_contexts_from_properties
+from anant.layered_contextual_graph.analytics import derive_contexts_from_properties
 
 # Derive and auto-apply
 contexts = derive_contexts_from_properties(
@@ -325,8 +325,8 @@ sensors = ia.find_by_property_value('category', 'sensor')  # O(1)
 ## 🎯 Complete Example
 
 ```python
-from layered_contextual_graph.core import LayeredContextualGraph, LayerType
-from layered_contextual_graph.analytics import (
+from anant.layered_contextual_graph.core import LayeredContextualGraph, LayerType
+from anant.layered_contextual_graph.analytics import (
     PropertyAnalytics,
     IndexAnalytics,
     TagAnalytics,

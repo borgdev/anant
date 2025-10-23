@@ -14,7 +14,7 @@ Each data modality receives its own Riemannian interpretation. Curvature, geodes
 - Outliers pop out as high-curvature entities.
 
 ```python
-from geometry.core import PropertyManifold
+from anant.geometry.core import PropertyManifold
 
 pm = PropertyManifold(property_vectors)
 curvature = pm.compute_curvature()
@@ -31,7 +31,7 @@ outliers = pm.detect_property_outliers()
 - Geodesic extension yields structure-aware forecasts.
 
 ```python
-from geometry.domains import TimeSeriesManifold
+from anant.geometry.domains import TimeSeriesManifold
 
 ts = TimeSeriesManifold(series)
 cycles = ts.find_closed_geodesics()
@@ -49,7 +49,7 @@ forecast = ts.geodesic_forecast(steps=24)
 - Wrapper: `find_bottlenecks_geometric()`.
 
 ```python
-from geometry.domains import find_bottlenecks_geometric
+from anant.geometry.domains import find_bottlenecks_geometric
 
 hotspots = find_bottlenecks_geometric(graph, flow_attribute="traffic", top_k=5)
 ```
@@ -64,7 +64,7 @@ hotspots = find_bottlenecks_geometric(graph, flow_attribute="traffic", top_k=5)
 - Wrapper: `compute_risk_geometric()`.
 
 ```python
-from geometry.domains import compute_risk_geometric
+from anant.geometry.domains import compute_risk_geometric
 
 risk = compute_risk_geometric(returns_matrix, "AAPL", "TSLA")
 print(risk.geodesic_distance, risk.correlation)
@@ -80,7 +80,7 @@ print(risk.geodesic_distance, risk.correlation)
 - Wrapper: `find_strained_conformers_geometric()`.
 
 ```python
-from geometry.domains import find_strained_conformers_geometric
+from anant.geometry.domains import find_strained_conformers_geometric
 
 strained = find_strained_conformers_geometric(conformer_properties)
 ```
@@ -94,7 +94,7 @@ strained = find_strained_conformers_geometric(conformer_properties)
 - Approximate invariants emerge from near-zero gradients.
 
 ```python
-from geometry.domains import PhaseSpaceManifold
+from anant.geometry.domains import PhaseSpaceManifold
 
 ps = PhaseSpaceManifold(trajectories)
 chaotic = ps.detect_chaotic_orbits(threshold=0.05)
@@ -109,7 +109,7 @@ chaotic = ps.detect_chaotic_orbits(threshold=0.05)
 - Curvature of neighborhood covariance scores polysemy.
 
 ```python
-from geometry.domains import SemanticManifold
+from anant.geometry.domains import SemanticManifold
 
 sm = SemanticManifold(embeddings)
 analogy = sm.analogy("king", "queen", "man")[0]
@@ -148,7 +148,7 @@ Universal contagion/propagation framework.
 - Helper: `detect_spread_hotspots()`
 
 ```python
-from geometry.domains import SpreadDynamicsManifold
+from anant.geometry.domains import SpreadDynamicsManifold
 
 epidemic = SpreadDynamicsManifold(contact_network, 'infection_rate')
 hotspots = epidemic.detect_acceleration_zones()
@@ -169,7 +169,7 @@ Multi-resource optimization framework.
 - Helper: `find_allocation_stress()`
 
 ```python
-from geometry.domains import AllocationManifold
+from anant.geometry.domains import AllocationManifold
 
 resources = AllocationManifold(allocations, capacities)
 stress = resources.detect_stress_points()
@@ -189,7 +189,7 @@ Workflow/pipeline analysis framework.
 - Helper: `find_workflow_bottlenecks()`
 
 ```python
-from geometry.domains import ProcessManifold
+from anant.geometry.domains import ProcessManifold
 
 workflow = ProcessManifold(production_pipeline)
 bottlenecks = workflow.find_bottlenecks()
@@ -210,7 +210,7 @@ Similarity-based pairing framework.
 - Helper: `find_best_matches()`
 
 ```python
-from geometry.domains import MatchingManifold
+from anant.geometry.domains import MatchingManifold
 
 matching = MatchingManifold(set_a=patients, set_b=trials)
 matches = matching.find_optimal_matches(entity_id='patient-123', top_k=5)
@@ -230,7 +230,7 @@ Multi-level system analysis via fiber bundle geometry.
 - Escalation path computation
 
 ```python
-from geometry.domains import HierarchicalManifold
+from anant.geometry.domains import HierarchicalManifold
 
 hierarchy = HierarchicalManifold(org_structure, level_names=['employee', 'team', 'division'])
 impact = hierarchy.compute_cross_level_impact('dept-A', change={'budget': -100K})

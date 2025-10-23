@@ -87,7 +87,7 @@
 ### **Simple Example**
 
 ```python
-from layered_contextual_graph.production import (
+from anant.layered_contextual_graph.production import (
     MissionCriticalLCG,
     ProductionConfig
 )

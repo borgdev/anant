@@ -64,7 +64,7 @@ LayeredContextualGraph → Hypergraph (Anant Core) → object
 
 **Verification**:
 ```python
-from layered_contextual_graph.core import LayeredContextualGraph
+from anant.layered_contextual_graph.core import LayeredContextualGraph
 from anant.classes.hypergraph.core.hypergraph import Hypergraph
 
 lcg = LayeredContextualGraph(name="test")
@@ -131,7 +131,7 @@ coherence_after = lcg.get_quantum_coherence("entity_1")  # 0.0
 ### **4. Quantum-Ready for Future DB (As Required)**
 
 ```python
-from layered_contextual_graph.quantum import (
+from anant.layered_contextual_graph.quantum import (
     QuantumReadyInterface,
     prepare_for_quantum_db
 )
@@ -407,7 +407,7 @@ Total: 8/8 tests passed
 ## 📚 Code Example
 
 ```python
-from layered_contextual_graph.core import (
+from anant.layered_contextual_graph.core import (
     LayeredContextualGraph,
     LayerType,
     ContextType

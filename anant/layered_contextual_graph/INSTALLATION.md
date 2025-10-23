@@ -106,7 +106,7 @@ Complete demonstration successfully executed:
 ## 💻 Usage Example
 
 ```python
-from layered_contextual_graph.core import (
+from anant.layered_contextual_graph.core import (
     LayeredContextualGraph,
     LayerType,
     ContextType

@@ -32,7 +32,7 @@ except ImportError:
             self.name = kwargs.get('name', 'hypergraph')
 
 # Import Layered Contextual Graph
-from layered_contextual_graph.core import (
+from anant.layered_contextual_graph.core import (
     LayeredContextualGraph,
     LayerType,
     ContextType,
@@ -269,7 +269,7 @@ def demo_layered_contextual_graph():
     # Quantum-ready features
     print("\n10. Quantum-Ready Features (Future DB)...")
     
-    from layered_contextual_graph.quantum import (
+    from anant.layered_contextual_graph.quantum import (
         QuantumReadyInterface,
         prepare_for_quantum_db
     )

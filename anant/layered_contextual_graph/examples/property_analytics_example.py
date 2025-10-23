@@ -24,8 +24,8 @@ except ImportError:
     print("⚠️  Anant required for full demo")
     sys.exit(1)
 
-from layered_contextual_graph.core import LayeredContextualGraph, LayerType
-from layered_contextual_graph.analytics import (
+from anant.layered_contextual_graph.core import LayeredContextualGraph, LayerType
+from anant.layered_contextual_graph.analytics import (
     PropertyAnalytics,
     IndexAnalytics,
     TagAnalytics,

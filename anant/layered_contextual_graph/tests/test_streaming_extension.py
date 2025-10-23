@@ -29,8 +29,8 @@ except ImportError:
             self.data = data
             self.name = kwargs.get('name', 'hg')
 
-from layered_contextual_graph.core import LayeredContextualGraph, LayerType
-from layered_contextual_graph.extensions import (
+from anant.layered_contextual_graph.core import LayeredContextualGraph, LayerType
+from anant.layered_contextual_graph.extensions import (
     StreamingLayeredGraph,
     LayerEventAdapter,
     enable_streaming

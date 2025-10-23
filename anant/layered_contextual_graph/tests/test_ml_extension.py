@@ -19,8 +19,8 @@ except ImportError:
     print("⚠️  Required dependencies not installed.")
     sys.exit(1)
 
-from layered_contextual_graph.core import LayeredContextualGraph, LayerType
-from layered_contextual_graph.extensions import (
+from anant.layered_contextual_graph.core import LayeredContextualGraph, LayerType
+from anant.layered_contextual_graph.extensions import (
     MLLayeredGraph,
     EmbeddingLayer,
     EntityEmbedding,
@@ -321,7 +321,7 @@ def test_auto_context_detection():
     ml_lcg.add_embedding_layer("layer2")
     
     # Add contexts
-    from layered_contextual_graph.core import Context, ContextType
+    from anant.layered_contextual_graph.core import Context, ContextType
     
     context1 = Context(
         name="temporal",

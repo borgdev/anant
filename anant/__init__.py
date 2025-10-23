@@ -258,6 +258,22 @@ def __getattr__(name):
         return _get_analysis()
     elif name == 'governance':
         return _get_governance()
+    elif name == 'geometry':
+        # Lazy import of geometry module
+        try:
+            import anant.geometry as geometry_module
+            return geometry_module
+        except ImportError as e:
+            print(f"Warning: Geometry module not available: {e}")
+            return None
+    elif name == 'layered_contextual_graph':
+        # Lazy import of layered_contextual_graph module
+        try:
+            import anant.layered_contextual_graph as lcg_module
+            return lcg_module
+        except ImportError as e:
+            print(f"Warning: Layered Contextual Graph module not available: {e}")
+            return None
     elif name in ['StreamEvent', 'StreamEventType', 'quick_clean', 'quick_quality_check', 'quick_convert']:
         # Lazy I/O module access
         io_modules = _get_io_modules()
@@ -385,6 +401,8 @@ __all__ = [
     'algorithms',
     'analysis', 
     'governance',
+    'geometry',
+    'layered_contextual_graph',
 ]# Add Jupyter exports if available (temporarily disabled)
 # if JUPYTER_AVAILABLE:
 #     __all__.extend([

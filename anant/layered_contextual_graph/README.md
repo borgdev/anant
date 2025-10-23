@@ -63,7 +63,7 @@ pip install polars numpy scipy
 ### **Basic Usage**
 
 ```python
-from layered_contextual_graph.core import (
+from anant.layered_contextual_graph.core import (
     LayeredContextualGraph,
     LayerType,
     ContextType
@@ -254,7 +254,7 @@ down_results = lcg.propagate_down(
 ### **7. Quantum-Ready for Future DB**
 
 ```python
-from layered_contextual_graph.quantum import (
+from anant.layered_contextual_graph.quantum import (
     QuantumReadyInterface,
     prepare_for_quantum_db
 )
