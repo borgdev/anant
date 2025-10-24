@@ -1,0 +1,281 @@
+{{- if .Values.rayWorkers.geometric.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "anant-enterprise.fullname" . }}-ray-worker-geometric
+  labels:
+    {{- include "anant-enterprise.rayWorkerLabels" . | nindent 4 }}
+    worker.type: geometric
+spec:
+  replicas: {{ .Values.rayWorkers.geometric.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "anant-enterprise.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: ray-worker
+      worker.type: geometric
+  template:
+    metadata:
+      labels:
+        {{- include "anant-enterprise.rayWorkerLabels" . | nindent 8 }}
+        worker.type: geometric
+    spec:
+      {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "anant-enterprise.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: ray-worker-geometric
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              ray start --address={{ include "anant-enterprise.rayHeadServiceName" . }}:10001 \
+                --redis-password=${RAY_REDIS_PASSWORD} &&
+              python ray_distributed_processors_fixed.py --mode=geometric_worker
+          env:
+            {{- include "anant-enterprise.commonEnvVars" . | nindent 12 }}
+            {{- include "anant-enterprise.securityEnvVars" . | nindent 12 }}
+            - name: RAY_HEAD_NODE
+              value: "false"
+            - name: ANANT_WORKER_TYPE
+              value: "geometric"
+            - name: RAY_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "anant-enterprise.fullname" . }}-secrets
+                  key: ray-redis-password
+          resources:
+            {{- toYaml .Values.rayWorkers.geometric.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+              readOnly: true
+            - name: logs
+              mountPath: /app/logs
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: data
+          {{- if .Values.persistence.data.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "anant-enterprise.fullname" . }}-data
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: logs
+          {{- if .Values.persistence.logs.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "anant-enterprise.fullname" . }}-logs
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: tmp
+          emptyDir: {}
+      {{- with .Values.rayWorkers.geometric.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.rayWorkers.geometric.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.rayWorkers.geometric.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
+---
+{{- if .Values.rayWorkers.contextual.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "anant-enterprise.fullname" . }}-ray-worker-contextual
+  labels:
+    {{- include "anant-enterprise.rayWorkerLabels" . | nindent 4 }}
+    worker.type: contextual
+spec:
+  replicas: {{ .Values.rayWorkers.contextual.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "anant-enterprise.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: ray-worker
+      worker.type: contextual
+  template:
+    metadata:
+      labels:
+        {{- include "anant-enterprise.rayWorkerLabels" . | nindent 8 }}
+        worker.type: contextual
+    spec:
+      {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "anant-enterprise.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: ray-worker-contextual
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              ray start --address={{ include "anant-enterprise.rayHeadServiceName" . }}:10001 \
+                --redis-password=${RAY_REDIS_PASSWORD} &&
+              python ray_distributed_processors_fixed.py --mode=contextual_worker
+          env:
+            {{- include "anant-enterprise.commonEnvVars" . | nindent 12 }}
+            {{- include "anant-enterprise.securityEnvVars" . | nindent 12 }}
+            - name: RAY_HEAD_NODE
+              value: "false"
+            - name: ANANT_WORKER_TYPE
+              value: "contextual"
+            - name: RAY_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "anant-enterprise.fullname" . }}-secrets
+                  key: ray-redis-password
+          resources:
+            {{- toYaml .Values.rayWorkers.contextual.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+              readOnly: true
+            - name: logs
+              mountPath: /app/logs
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: data
+          {{- if .Values.persistence.data.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "anant-enterprise.fullname" . }}-data
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: logs
+          {{- if .Values.persistence.logs.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "anant-enterprise.fullname" . }}-logs
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: tmp
+          emptyDir: {}
+      {{- with .Values.rayWorkers.contextual.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.rayWorkers.contextual.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.rayWorkers.contextual.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
+---
+{{- if .Values.rayWorkers.multipurpose.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "anant-enterprise.fullname" . }}-ray-worker-multipurpose
+  labels:
+    {{- include "anant-enterprise.rayWorkerLabels" . | nindent 4 }}
+    worker.type: multipurpose
+spec:
+  replicas: {{ .Values.rayWorkers.multipurpose.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "anant-enterprise.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: ray-worker
+      worker.type: multipurpose
+  template:
+    metadata:
+      labels:
+        {{- include "anant-enterprise.rayWorkerLabels" . | nindent 8 }}
+        worker.type: multipurpose
+    spec:
+      {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "anant-enterprise.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: ray-worker-multipurpose
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              ray start --address={{ include "anant-enterprise.rayHeadServiceName" . }}:10001 \
+                --redis-password=${RAY_REDIS_PASSWORD} &&
+              python ray_distributed_processors_fixed.py --mode=multi_worker
+          env:
+            {{- include "anant-enterprise.commonEnvVars" . | nindent 12 }}
+            {{- include "anant-enterprise.securityEnvVars" . | nindent 12 }}
+            - name: RAY_HEAD_NODE
+              value: "false"
+            - name: ANANT_WORKER_TYPE
+              value: "multi"
+            - name: RAY_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "anant-enterprise.fullname" . }}-secrets
+                  key: ray-redis-password
+          resources:
+            {{- toYaml .Values.rayWorkers.multipurpose.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+              readOnly: true
+            - name: logs
+              mountPath: /app/logs
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: data
+          {{- if .Values.persistence.data.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "anant-enterprise.fullname" . }}-data
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: logs
+          {{- if .Values.persistence.logs.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "anant-enterprise.fullname" . }}-logs
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: tmp
+          emptyDir: {}
+      {{- with .Values.rayWorkers.multipurpose.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.rayWorkers.multipurpose.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.rayWorkers.multipurpose.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

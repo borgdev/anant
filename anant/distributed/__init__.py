@@ -111,6 +111,18 @@ from .partitioning import (
     create_production_partitioner
 )
 
+# Ray-based distributed computing
+try:
+    from .ray_anant_cluster import AnantRayCluster
+    from .ray_distributed_processors_fixed import (
+        GeometricProcessor,
+        ContextualProcessor,
+        MultiProcessor
+    )
+    RAY_AVAILABLE = True
+except ImportError:
+    RAY_AVAILABLE = False
+
 __version__ = "1.0.0"
 
 __all__ = [
@@ -192,3 +204,12 @@ __all__ = [
     "KaHiPPartitioner",
     "create_production_partitioner",
 ]
+
+# Add Ray components to __all__ if available
+if 'RAY_AVAILABLE' in locals() and RAY_AVAILABLE:
+    __all__.extend([
+        "AnantRayCluster",
+        "GeometricProcessor",
+        "ContextualProcessor", 
+        "MultiProcessor"
+    ])

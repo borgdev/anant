@@ -1,0 +1,139 @@
+version: '3.8'
+
+# Anant Enterprise Ray Cluster - Development Environment
+# Simplified setup for local development and testing
+
+services:
+  # Ray Head Node - Development
+  anant-ray-head-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    image: anant/enterprise-ray:dev
+    container_name: anant-ray-head-dev
+    hostname: ray-head-dev
+    command: >
+      sh -c "
+        ray start --head --dashboard-host=0.0.0.0 --dashboard-port=8265 &&
+        tail -f /dev/null
+      "
+    ports:
+      - "8000:8000"    # Anant Enterprise API
+      - "8265:8265"    # Ray Dashboard
+      - "10001:10001"  # Ray cluster communication
+    environment:
+      - RAY_DISABLE_IMPORT_WARNING=1
+      - RAY_HEAD_NODE=true
+      - ANANT_MODE=development
+      - ANANT_DEBUG=true
+      - ANANT_LOG_LEVEL=DEBUG
+    volumes:
+      - .:/app  # Mount source code for live reload
+      - anant-dev-data:/app/data
+      - anant-dev-logs:/app/logs
+    networks:
+      - anant-ray-dev-network
+    restart: "no"  # Don't restart in development
+
+  # Single Ray Worker - Development
+  anant-ray-worker-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    image: anant/enterprise-ray:dev
+    container_name: anant-ray-worker-dev
+    hostname: ray-worker-dev
+    command: >
+      sh -c "
+        ray start --address=ray-head-dev:6379 &&
+        tail -f /dev/null
+      "
+    environment:
+      - RAY_DISABLE_IMPORT_WARNING=1
+      - RAY_HEAD_NODE=false
+      - ANANT_MODE=development
+      - ANANT_DEBUG=true
+    volumes:
+      - .:/app  # Mount source code
+      - anant-dev-data:/app/data:ro
+      - anant-dev-logs:/app/logs
+    networks:
+      - anant-ray-dev-network
+    depends_on:
+      - anant-ray-head-dev
+    restart: "no"
+
+  # Development Database
+  anant-postgres-dev:
+    image: postgres:15-alpine
+    container_name: anant-postgres-dev
+    hostname: postgres-dev
+    environment:
+      - POSTGRES_DB=anant_dev
+      - POSTGRES_USER=anant_dev
+      - POSTGRES_PASSWORD=dev_password
+    ports:
+      - "5433:5432"  # Different port for dev
+    volumes:
+      - anant-dev-postgres-data:/var/lib/postgresql/data
+    networks:
+      - anant-ray-dev-network
+    restart: "no"
+
+  # Development Redis
+  anant-redis-dev:
+    image: redis:7-alpine
+    container_name: anant-redis-dev
+    hostname: redis-dev
+    command: redis-server --maxmemory 256mb
+    ports:
+      - "6380:6379"  # Different port for dev
+    volumes:
+      - anant-dev-redis-data:/data
+    networks:
+      - anant-ray-dev-network
+    restart: "no"
+
+  # Jupyter Notebook for interactive development
+  anant-jupyter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    image: anant/enterprise-ray:dev
+    container_name: anant-jupyter
+    hostname: jupyter
+    user: root  # Run as root to avoid permission issues
+    command: >
+      sh -c "
+        pip install --no-warn-script-location jupyter jupyterlab &&
+        jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --LabApp.token=anant_dev
+      "
+    ports:
+      - "8888:8888"  # Jupyter Lab
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+    volumes:
+      - .:/app
+      - ./notebooks:/app/notebooks
+    networks:
+      - anant-ray-dev-network
+    restart: "no"
+
+# Development Networks
+networks:
+  anant-ray-dev-network:
+    driver: bridge
+
+# Development Volumes
+volumes:
+  anant-dev-data:
+    driver: local
+  anant-dev-logs:
+    driver: local
+  anant-dev-postgres-data:
+    driver: local
+  anant-dev-redis-data:
+    driver: local

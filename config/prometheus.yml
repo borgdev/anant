@@ -1,0 +1,57 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # Anant Ray Head monitoring
+  - job_name: 'anant-ray-head'
+    static_configs:
+      - targets: ['anant-ray-head:8000']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Ray Dashboard metrics
+  - job_name: 'ray-dashboard'
+    static_configs:
+      - targets: ['anant-ray-head:8265']
+    metrics_path: '/api/ray/status'
+    scrape_interval: 30s
+
+  # Ray Workers monitoring  
+  - job_name: 'ray-workers'
+    static_configs:
+      - targets: 
+        - 'anant-ray-worker-geo-1:8000'
+        - 'anant-ray-worker-ctx-1:8000'
+        - 'anant-ray-worker-multi-1:8000'
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # PostgreSQL monitoring (if enabled)
+  - job_name: 'postgresql'
+    static_configs:
+      - targets: ['anant-postgres:5432']
+    scrape_interval: 60s
+
+  # Redis monitoring (if enabled)
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['anant-redis:6379']
+    scrape_interval: 60s
+
+  # Nginx monitoring
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['anant-nginx:80']
+    metrics_path: '/nginx_status'
+    scrape_interval: 30s
+
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']

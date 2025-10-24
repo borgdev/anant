@@ -1,0 +1,68 @@
+# Anant Enterprise Ray Server - Core Requirements
+# Production dependencies for Ray cluster deployment
+
+# Core Python packages
+ray[default]==2.31.0
+numpy>=1.24.0
+pandas>=2.0.0
+polars>=0.20.0
+scipy>=1.10.0
+psutil>=5.9.0
+
+# Web framework and API
+fastapi>=0.100.0
+uvicorn[standard]>=0.20.0
+pydantic>=2.0.0
+pydantic-settings>=2.1.0
+graphql-core>=3.2.0
+strawberry-graphql>=0.200.0
+websockets>=11.0.0
+python-multipart>=0.0.6
+
+# Database and caching
+asyncpg>=0.29.0
+psycopg2-binary>=2.9.0  # Synchronous PostgreSQL driver for Alembic
+redis>=5.0.0
+sqlalchemy[asyncio]>=2.0.0
+alembic>=1.12.0
+
+# Authentication and security
+pyjwt>=2.8.0
+python-jose[cryptography]>=3.3.0
+cryptography>=41.0.0
+bcrypt>=4.0.0
+passlib[bcrypt]>=1.7.4
+email-validator>=2.1.0
+
+# Monitoring and observability
+prometheus-client>=0.17.0
+structlog>=23.0.0
+rich>=13.0.0
+
+# Async and concurrency
+asyncio-mqtt>=0.13.0
+aiofiles>=23.0.0
+httpx>=0.24.0
+
+# Data processing and ML
+scikit-learn>=1.3.0
+networkx>=3.1.0
+torch>=2.0.0,<2.1.0  # Pin for Ray compatibility
+
+# Configuration and utilities
+pyyaml>=6.0.0
+python-dotenv>=1.0.0
+click>=8.1.0
+typer>=0.9.0
+
+# Development and testing (optional)
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.5.0
+
+# Ray ecosystem
+ray[serve]==2.31.0
+ray[tune]==2.31.0
+ray[data]==2.31.0

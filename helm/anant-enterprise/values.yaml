@@ -1,0 +1,292 @@
+# Anant Enterprise Ray Cluster - Default Values
+# Configuration values for the Helm chart
+
+# Global settings
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+  storageClass: ""
+
+# Image configuration
+image:
+  registry: docker.io
+  repository: anant/enterprise-ray
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+
+# Anant Enterprise configuration
+anant:
+  # Cluster configuration
+  clusterName: "anant-enterprise-production"
+  mode: "production"
+  
+  # Security settings
+  security:
+    enabled: true
+    jwtSecret: ""  # Will be generated if empty
+    apiKeySecret: ""  # Will be generated if empty
+    
+  # Enterprise features
+  enterprise:
+    monitoring: true
+    auditing: true
+    multiTenancy: true
+    
+  # Ray cluster settings
+  ray:
+    dashboardPort: 8265
+    redisPassword: ""  # Will be generated if empty
+    
+# Ray Head Node
+rayHead:
+  enabled: true
+  replicaCount: 1
+  
+  # Resource allocation
+  resources:
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+    requests:
+      cpu: 2000m
+      memory: 4Gi
+      
+  # Node selector and affinity
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  
+  # Service configuration
+  service:
+    type: ClusterIP
+    port: 8000
+    rayPort: 10001
+    dashboardPort: 8265
+    
+  # Ingress configuration
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hosts:
+      - host: anant.local
+        paths:
+          - path: /
+            pathType: Prefix
+    tls: []
+    
+# Ray Worker Nodes
+rayWorkers:
+  # Geometric processing workers
+  geometric:
+    enabled: true
+    replicaCount: 2
+    
+    resources:
+      limits:
+        cpu: 2000m
+        memory: 4Gi
+      requests:
+        cpu: 1000m
+        memory: 2Gi
+        
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    
+  # Contextual processing workers  
+  contextual:
+    enabled: true
+    replicaCount: 2
+    
+    resources:
+      limits:
+        cpu: 2000m
+        memory: 4Gi
+      requests:
+        cpu: 1000m
+        memory: 2Gi
+        
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    
+  # Multi-purpose workers
+  multipurpose:
+    enabled: true
+    replicaCount: 1
+    
+    resources:
+      limits:
+        cpu: 4000m
+        memory: 8Gi
+      requests:
+        cpu: 2000m
+        memory: 4Gi
+        
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+# Autoscaling configuration
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+# PostgreSQL database (using Bitnami chart)
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: ""  # Will be generated if empty
+    username: anant
+    password: ""  # Will be generated if empty
+    database: anant_enterprise
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+
+# Redis for Ray coordination (using Bitnami chart)
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    password: ""  # Will be generated if empty
+  master:
+    persistence:
+      enabled: true
+      size: 8Gi
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+
+# Monitoring stack
+monitoring:
+  # Prometheus
+  prometheus:
+    enabled: true
+    server:
+      persistentVolume:
+        enabled: true
+        size: 20Gi
+      resources:
+        limits:
+          cpu: 1000m
+          memory: 2Gi
+        requests:
+          cpu: 500m
+          memory: 1Gi
+          
+  # Grafana
+  grafana:
+    enabled: true
+    adminPassword: ""  # Will be generated if empty
+    persistence:
+      enabled: true
+      size: 10Gi
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+
+# Persistent volumes
+persistence:
+  # Data persistence
+  data:
+    enabled: true
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    size: 50Gi
+    
+  # Log persistence
+  logs:
+    enabled: true
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    size: 20Gi
+
+# Service Account
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# Pod Security Context
+podSecurityContext:
+  fsGroup: 1001
+  runAsUser: 1001
+  runAsGroup: 1001
+  runAsNonRoot: true
+
+# Security Context
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1001
+  capabilities:
+    drop:
+      - ALL
+
+# Network Policies
+networkPolicy:
+  enabled: false
+  ingress: []
+  egress: []
+
+# Pod Disruption Budget
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+# Load Balancer / Ingress
+loadBalancer:
+  enabled: false
+  type: "nginx"  # nginx, haproxy, etc.
+  
+ingress:
+  enabled: false
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+    - host: anant-enterprise.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: anant-enterprise-tls
+      hosts:
+        - anant-enterprise.example.com
+
+# Backup and recovery
+backup:
+  enabled: false
+  schedule: "0 2 * * *"  # Daily at 2 AM
+  retention: "30d"
+  
+# Development settings
+development:
+  enabled: false
+  debugMode: false
+  hotReload: false
+  jupyterEnabled: false

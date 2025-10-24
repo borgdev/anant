@@ -1,0 +1,44 @@
+{{- if .Values.rayHead.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "anant-enterprise.rayHeadServiceName" . }}
+  labels:
+    {{- include "anant-enterprise.rayHeadLabels" . | nindent 4 }}
+spec:
+  type: {{ .Values.rayHead.service.type }}
+  ports:
+    - port: {{ .Values.rayHead.service.port }}
+      targetPort: api
+      protocol: TCP
+      name: api
+    - port: {{ .Values.rayHead.service.rayPort }}
+      targetPort: ray-client
+      protocol: TCP
+      name: ray-client
+    - port: {{ .Values.rayHead.service.dashboardPort }}
+      targetPort: dashboard
+      protocol: TCP
+      name: dashboard
+  selector:
+    {{- include "anant-enterprise.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: ray-head
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "anant-enterprise.fullname" . }}-dashboard
+  labels:
+    {{- include "anant-enterprise.rayHeadLabels" . | nindent 4 }}
+    service.type: dashboard
+spec:
+  type: {{ .Values.rayHead.service.type }}
+  ports:
+    - port: 80
+      targetPort: dashboard
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "anant-enterprise.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: ray-head
+{{- end }}
